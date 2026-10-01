@@ -1,0 +1,50 @@
+/*Standard HTML CSS*/
+
+/*html {
+}*/
+
+body {
+  z-index: 0;
+  color: #000; /*black*/
+  width: 100vw; /*vw=view width*/
+  height: 100vh;
+  font-family: sans-serif;
+}
+
+/*Structure CSS*/
+#container {
+  position: relative;
+  z-index: 10; /*height of object*/
+  height: 768px;
+  width: 1048px;
+  background-size: cover;
+}
+
+#container a {
+  font-size: 75%;
+  position: absolute;
+  top: 7.83%;
+  left: 38.9%;
+  opacity: 0;
+  letter-spacing: 0;
+}
+
+.img_box {
+  background-size: cover;
+  color: #fff;
+}
+
+/* Classes */
+.rmid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.rsbmid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
