@@ -8,6 +8,7 @@
     --text-main: #333333;
     --text-nav: #ffffff;
     --border-color: #dddddd;
+    --sidebar-width: 260px;
 }
 
 [data-theme="dark"] {
@@ -71,6 +72,17 @@ body {
     font-weight: 500;
 }
 
+.nav-toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: 20px; /* Spacing from the nav links */
+    display: flex;
+    align-items: center;
+}
+
 /* --- Dark Mode Toggle Switch (FIXED) --- */
 .theme-switch-wrapper {
     display: flex;
@@ -126,31 +138,108 @@ input:checked + .slider:before {
     display: flex;
     padding-top: 60px;
     min-height: calc(100vh - 60px);
+    align-items: stretch;
 }
 
 .sidebar {
-    width: 260px;
+    width: var(--sidebar-width);
     background: var(--bg-sidebar);
     border-right: 1px solid var(--border-color);
-    transition: transform 0.3s ease, margin-left 0.3s ease;
+    transition: transform 0.3s ease;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.sidebar-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.enrolled-class-item, .sidebar-section h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-container {
+    position: relative; /* Required for absolute positioning of the button */
+}
+
+#sidebar-toggle-floating {
+    position: absolute;
+    top: 70px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+#sidebar-toggle-floating {
+    left: var(--sidebar-width);
+    transform: translateX(-50%);
+}
+
+body:not(.sidebar-collapsed) #sidebar-toggle-floating {
+    left: var(--sidebar-width);
+    transform: translateX(-50%); /* Centers the circle on the line */
+}
+
+body.sidebar-collapsed #sidebar-toggle-floating {
+    left: 15px;
+    transform: translateX(0); /* Resets center so it sits at the edge */
 }
 
 body.sidebar-collapsed .sidebar {
-    margin-left: -260px;
+    transform: translateX(-100%);
 }
 
 main {
     flex-grow: 1;
     padding: 2rem;
+    width: 100%;
 }
 
 /* --- Components --- */
-.course-card, .widget {
+.widget {
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border-color);
+}
+
+.course-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    height: 100%; /* Ensure cards in a row have equal height */
+}
+
+.course-footer {
+    margin-top: auto; /* This pushes the footer to the bottom of the card */
+    padding-top: 10px;
 }
 
 input[type="text"] {
@@ -174,6 +263,30 @@ input[type="text"] {
     margin-bottom: 10px;
     background-color: var(--bg-card);
     border-radius: 4px;
+}
+
+.schedule-grid th:first-child,
+.schedule-grid td:first-child {
+    width: 60px; /* Slimmer time column */
+}
+
+.schedule-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.schedule-grid th, .schedule-grid td { border: 1px solid var(--border-color); height: 40px; text-align: center; position: relative; vertical-align: top; }
+.schedule-grid th { background: var(--primary); color: white; }
+.time-col { width: 80px; font-size: 1rem; color: var(--text-main);}
+
+.course-block {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 5px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px;
+    border-radius: 3px;
+    overflow: hidden;
+    z-index: 10;
 }
 
 .search-container {

@@ -32,23 +32,25 @@
 </header>
 
 <div class="app-layout">
-  <aside class="sidebar">
+  <aside class="sidebar" id="main-sidebar">
     <div class="sidebar-content">
       <h3>Enrolled Classes</h3>
-      <div id="enrolled-list"><!-- Populated by JS --></div>
+      <div id="enrolled-list"></div>
+      <button id="unenroll-all-btn" class="btn btn-danger" style="margin-top: auto; font-size: 0.8rem; align-self: stretch;">Unenroll All</button>
     </div>
   </aside>
 
-  <!-- The Dashboard Grid from our previous discussion -->
+  <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
+
   <main id="dashboard" class="dashboard-grid">
     <h1 style="grid-column: 1 / -1;">Degree Completion Planner</h1>
 
     <div id="widget-requisites" class="widget">Requisites Flow</div>
     <div id="widget-optimizer" class="widget">Optimizer</div>
 
-    <!-- Example Course Card for testing -->
-    <div class="course-card">
-      <h3>Mock Goal: Graduation</h3>
+    <!-- Example Widget for testing -->
+    <div class="widget">
+      <h3>Goal: Graduation</h3>
       <p>Progress: 45%</p>
       <div style="width: 100%; background: #eee; height: 10px; border-radius: 5px;">
         <div style="width: 45%; background: var(--accent); height: 100%;"></div>
