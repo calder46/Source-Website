@@ -1,29 +1,59 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search</title>
-  <!--Stylesheets-->
-  <link rel="stylesheet" href="../css/reset.css" />
-  <link rel="stylesheet" href="../css/style.css" />
-</head>
+  <meta charset="UTF-8">
+  <title>FastTrak | Course Search</title>
 
+  <script>
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  </script>
+
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
 <body>
-  <header class="nav">
-    <div class="nav-logo">Academic Planner</div>
-    <nav class="nav-links">
-      <a href="../index.html">Home</a>
-      <a href="../pages/search.html">Course Search</a>
-      <a href="../pages/calendar.html">Calendar</a>
-      <a href="../pages/dcp.html">Completion Plan</a>
-    </nav>
-  </header>
+
+<header class="top-nav">
+  <div class="logo">FastTrak</div>
+  <nav class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="search.html" class="active">Course Search</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="dcp.html">Completion Plan</a>
+
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-content">
+      <h3>Enrolled Classes</h3>
+      <div id="enrolled-list"></div>
+    </div>
+  </aside>
 
   <main>
     <h1>Course Search</h1>
-    <p>Search functionality goes here.</p>
-    <img src="../images/example1.jpg" alt="something is very wrong" />
+    <div class="search-container" style="margin-bottom: 30px;">
+      <label for="course-search" class="visually-hidden">Search courses</label>
+      <input type="text" id="course-search" placeholder="Type a course name or code (e.g., CS101)...">
+    </div>
+
+    <!-- This container will be filled by JavaScript -->
+    <div id="course-results" class="course-results">
+      <!-- Search results appear here -->
+    </div>
   </main>
+</div>
+
+<script src="../js/courses.js"></script>
+<script src="../js/app.js"></script>
 </body>
 </html>

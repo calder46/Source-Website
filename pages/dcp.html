@@ -1,29 +1,63 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Degree Completion Planner</title>
-  <!--Stylesheets-->
-  <link rel="stylesheet" href="../css/reset.css" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <meta charset="UTF-8">
+  <title>FastTrak | Completion Plan</title>
+
+  <script>
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  </script>
+
+  <link rel="stylesheet" href="../css/styles.css">
 </head>
-
 <body>
-  <header class="nav">
-    <div class="nav-logo">Academic Planner</div>
-    <nav class="nav-links">
-      <a href="../index.html">Home</a>
-      <a href="../pages/search.html">Course Search</a>
-      <a href="../pages/calendar.html">Calendar</a>
-      <a href="../pages/dcp.html">Completion Plan</a>
-    </nav>
-  </header>
 
-  <main>
-    <h1>Degree Completion Planner</h1>
-    <p>Planner functionality goes here.</p>
-    <img src="../images/example3.jpg" alt="something is very wrong" />
+<header class="top-nav">
+  <div class="logo">FastTrak</div>
+  <nav class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="search.html">Course Search</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="dcp.html" class="active">Completion Plan</a>
+
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-content">
+      <h3>Enrolled Classes</h3>
+      <div id="enrolled-list"><!-- Populated by JS --></div>
+    </div>
+  </aside>
+
+  <!-- The Dashboard Grid from our previous discussion -->
+  <main id="dashboard" class="dashboard-grid">
+    <h1 style="grid-column: 1 / -1;">Degree Completion Planner</h1>
+
+    <div id="widget-requisites" class="widget">Requisites Flow</div>
+    <div id="widget-optimizer" class="widget">Optimizer</div>
+
+    <!-- Example Course Card for testing -->
+    <div class="course-card">
+      <h3>Mock Goal: Graduation</h3>
+      <p>Progress: 45%</p>
+      <div style="width: 100%; background: #eee; height: 10px; border-radius: 5px;">
+        <div style="width: 45%; background: var(--accent); height: 100%;"></div>
+      </div>
+    </div>
   </main>
+</div>
+
+<script src="../js/courses.js"></script>
+<script src="../js/app.js"></script>
 </body>
 </html>

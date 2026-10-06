@@ -1,29 +1,72 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Course Calendar</title>
-  <!--Stylesheets-->
-  <link rel="stylesheet" href="../css/reset.css" />
-  <link rel="stylesheet" href="../css/style.css" />
-</head>
+  <meta charset="UTF-8">
+  <title>FastTrak | Calendar</title>
 
+  <script>
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  </script>
+
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
 <body>
-  <header class="nav">
-    <div class="nav-logo">Academic Planner</div>
-    <nav class="nav-links">
-      <a href="../index.html">Home</a>
-      <a href="../pages/search.html">Course Search</a>
-      <a href="../pages/calendar.html">Calendar</a>
-      <a href="../pages/dcp.html">Completion Plan</a>
-    </nav>
-  </header>
+
+<header class="top-nav">
+  <div class="logo">FastTrak</div>
+  <nav class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="search.html">Course Search</a>
+    <a href="calendar.html" class="active">Calendar</a>
+    <a href="dcp.html">Completion Plan</a>
+
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-content">
+      <h3>Enrolled Classes</h3>
+      <div id="enrolled-list"><!-- Populated by JS --></div>
+    </div>
+  </aside>
 
   <main>
-    <h1>Course Calendar</h1>
-    <p>Calendar functionality goes here.</p>
-    <img src="../images/example2.jpg" alt="something is very wrong" />
+    <h1>Your Schedule</h1>
+    <div id="calendar-view" style="background: white; padding: 2rem; border-radius: 8px;">
+      <!-- Calendar items will be injected here -->
+    </div>
   </main>
+</div>
+
+<script src="../js/courses.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // Simple script to show courses in the calendar view
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('calendar-view');
+    const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+
+    if (enrolled.length === 0) {
+      container.innerHTML = '<p>No courses enrolled yet. Go to Search to add some!</p>';
+    } else {
+      // We removed the background: #f9f9f9; and replaced it with a class 'calendar-event'
+      container.innerHTML = enrolled.map(course => `
+            <div class="calendar-event">
+                <strong>${course.id}</strong> - ${course.title}<br>
+                <small>Monday & Wednesday | 10:00 AM</small>
+            </div>
+        `).join('');
+    }
+  });
+</script>
 </body>
 </html>

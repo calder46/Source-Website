@@ -1,28 +1,46 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Academic Planner</title>
-  <!--Stylesheets-->
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/style.css">
+  <title>FastTrak | Home</title>
+
+  <script>
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  </script>
+
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
-  <header class="nav">
-    <div class="nav-logo">Academic Planner</div>
-    <nav class="nav-links">
-      <a href="./index.html">Home</a>
-      <a href="pages/search.html">Course Search</a>
-      <a href="pages/calendar.html">Calendar</a>
-      <a href="pages/dcp.html">Completion Plan</a>
-    </nav>
-  </header>
 
-  <main class="home">
-    <h1>Welcome to the Academic Planner</h1>
-    <p>Select a tool from the navigation bar above.</p>
-  </main>
+<header class="top-nav">
+  <div class="logo">FastTrak</div>
+  <nav class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="pages/search.html">Course Search</a>
+    <a href="pages/calendar.html">Calendar</a>
+    <a href="pages/dcp.html">Completion Plan</a>
+
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+</header>
+
+<main class="hero-section">
+  <h1>Optimize Your Academic Journey</h1>
+  <p>Plan your path, minimize costs, and reduce stress with FastTrak.</p>
+  <div class="cta-container">
+    <a href="pages/dcp.html" class="btn-primary">Get Started</a>
+  </div>
+</main>
+
+<script src="js/courses.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
