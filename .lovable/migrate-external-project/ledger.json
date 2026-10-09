@@ -1,0 +1,56 @@
+{
+  "source": "code-archive",
+  "scope": "Import original website files into the workspace without redesigning or expanding functionality",
+  "capabilities": [
+    {
+      "capability": "code and routes",
+      "source": "HTML/CSS/JavaScript; home, course search, calendar, completion plan, template",
+      "outcome": "preserve original static website under public/source-website and display its home page at /",
+      "status": "verified",
+      "next_action": "none for requested workspace import"
+    },
+    {
+      "capability": "assets",
+      "source": "five bundled example JPG images",
+      "outcome": "preserve as source-controlled original website files",
+      "status": "verified",
+      "next_action": "none for requested workspace import"
+    },
+    {
+      "capability": "enrollment and theme preferences",
+      "source": "browser localStorage",
+      "outcome": "preserve original browser-local behavior without adding a backend",
+      "status": "verified",
+      "next_action": "none for requested workspace import"
+    },
+    {
+      "capability": "completion planning",
+      "source": "placeholder widgets and fixed sample graduation progress",
+      "outcome": "preserve exactly; unfinished source features remain unfinished",
+      "status": "preserved",
+      "next_action": "none requested"
+    },
+    {
+      "capability": "database schema, records, auth identities and authorization",
+      "source": "no database or authentication call sites; course samples bundled in js/courses.js",
+      "outcome": "not applicable",
+      "status": "not_applicable",
+      "next_action": "none"
+    },
+    {
+      "capability": "external providers, public endpoints, callbacks, webhooks, schedules, secrets and cutover",
+      "source": "no external service call sites or environment variables",
+      "outcome": "not applicable",
+      "status": "not_applicable",
+      "next_action": "none"
+    },
+    {
+      "capability": "verification",
+      "source": "workspace preview and original static pages",
+      "outcome": "verify import and navigation",
+      "status": "verified",
+      "next_action": "none for requested workspace import"
+    }
+  ],
+  "verification_notes": "Routing test passed; browser verified home, nine course cards, enrollment, calendar placement and completion plan. Original unfinished widgets and source JavaScript limitations were preserved rather than expanded."
+}

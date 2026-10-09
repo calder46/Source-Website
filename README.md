@@ -1,11 +1,24 @@
-Things we need:
+# Workspace Organizer
 
-- customizable website layout button and UI (should have a save and reset to default button, a menu with widgets for prebuilt/existing sections, and modifiers that be added to class offering blocks) (white)
-- requisites flow planner widget (asa)
-- optimizer flow planner widget (wyatt) 	
-- splitscreen mode for course registration where you can see both current and prospective courses at the same time (calder)	
-- class difficulty modifier (daniel)	
-- rate my professor modifier (daniel) 	
-- prerequisite/time/other information visible from offering block view modifier (jacob)
+place all of this into the workspace.
 
-I'm still working on my part; I have to figure out how to get the CSS to actually bond/work with the html -Calder
+This project was built with [Lovable](https://lovable.dev).
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/0b4fe728-c942-481e-92f3-474503518e69).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+```

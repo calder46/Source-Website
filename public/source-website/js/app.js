@@ -9,13 +9,16 @@ const enrollCourse = (course) => {
 
     // Time Conflict Check
     if (course.day && course.startTime) {
-        const hasConflict = enrolled.some(e =>
-            e.day === course.day &&
-            ((course.startTime >= e.startTime && course.startTime < e.endTime) ||
-                (course.endTime > e.startTime && e.endTime <= e.endTime))
+        const toMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0); };
+        const days = String(course.day).split(',');
+        const conflict = enrolled.find(e =>
+            e.id !== course.id && e.day && e.startTime &&
+            String(e.day).split(',').some(d => days.includes(d)) &&
+            toMin(course.startTime) < toMin(e.endTime) &&
+            toMin(course.endTime) > toMin(e.startTime)
         );
-        if (hasConflict) {
-            alert(`Time Conflict! You are already enrolled in ${e.name} at this time.`);
+        if (conflict) {
+            alert(`Time Conflict! You are already enrolled in ${conflict.id} - ${conflict.name} at this time.`);
             return false;
         }
     }
@@ -147,6 +150,9 @@ const renderSearchResults = (filterText = "") => {
                             <span>Credits: ${course.credits}</span> | 
                             <strong>Tuition Cost: $${tuition}</strong>
                         </div>
+                        <div class="course-prereqs">
+                            <strong>Prerequisites:</strong> ${(course.prerequisites && course.prerequisites.length) ? course.prerequisites.join(', ') : 'None'}
+                        </div>
                         <button class="enroll-btn btn ${isEnrolled ? 'btn-danger' : 'btn-primary'}" 
                                 data-id="${course.id}" 
                                 data-action="${isEnrolled ? 'unenroll' : 'enroll'}">
@@ -208,22 +214,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const actionButtons = document.querySelectorAll('.enroll-btn');
-    actionButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const courseId = e.target.dataset.id;
-            const action = e.target.dataset.action;
+    // Prerequisite visibility toggle
+    const prereqBtn = document.getElementById('toggle-prereqs-btn');
+    const applyPrereqPref = () => {
+        const hidden = localStorage.getItem('hide_prereqs') === 'true';
+        document.body.classList.toggle('hide-prereqs', hidden);
+        if (prereqBtn) prereqBtn.innerText = hidden ? "Display prerequisites" : "Don't display prerequisites";
+    };
+    applyPrereqPref();
+    if (prereqBtn) {
+        prereqBtn.addEventListener('click', () => {
+            const hidden = localStorage.getItem('hide_prereqs') === 'true';
+            localStorage.setItem('hide_prereqs', String(!hidden));
+            applyPrereqPref();
+        });
+    }
 
-            if (action === 'enroll') {
-                // Find the full course object from database to ensure all properties are present
+    // Event delegation so buttons work after every search re-render
+    const resultsEl = document.getElementById('course-results');
+    if (resultsEl) {
+        resultsEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('.enroll-btn');
+            if (!btn) return;
+            const courseId = btn.dataset.id;
+            if (btn.dataset.action === 'enroll') {
                 const course = courseDatabase.find(c => c.id === courseId);
-                if (course && enrollCourse(course)) {
-                    refreshEnrollmentButtons();
-                }
-            } else if (action === 'unenroll') {
+                if (course && enrollCourse(course)) refreshEnrollmentButtons();
+            } else if (btn.dataset.action === 'unenroll') {
                 unenrollCourse(courseId);
                 refreshEnrollmentButtons();
             }
         });
-    });
+    }
 });

@@ -338,3 +338,5 @@ input[type="text"] {
   background-color: #2ecc71;
   color: white !important;
 }
+.course-prereqs { margin-top: 8px; font-size: 0.9rem; }
+body.hide-prereqs .course-prereqs { display: none; }
