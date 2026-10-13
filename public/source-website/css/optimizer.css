@@ -1,0 +1,57 @@
+﻿.optimizer-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 500px;
+    margin-bottom: 30px;
+}
+
+.control-card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ddd);
+}
+
+.optimizer-results {
+    margin-top: 30px;
+}
+
+.semester-block {
+    background: var(--bg-card);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color, #ddd);
+    overflow: hidden;
+}
+
+.semester-header {
+    background: var(--accent, #2563eb);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-row {
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.course-row:last-child { border-bottom: none; }
+
+.course-info h4 { margin: 0; font-size: 1rem; }
+.course-info p { margin: 2px 0 0 0; font-size: 0.85rem; color: var(--text-main); }
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-credits { background: #e0e7ff; color: #4338ca; }

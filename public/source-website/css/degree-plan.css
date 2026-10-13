@@ -60,11 +60,6 @@
     color: var(--plan-on-accent) !important;
 }
 
-.btn-subtle {
-    background: var(--plan-line);
-    color: var(--plan-text);
-}
-
 .degree-page input, .degree-page select {
     background: var(--plan-surface);
     color: var(--plan-text);
@@ -95,14 +90,6 @@
     font-weight: 600;
     color: var(--plan-muted);
     margin-left: 20px;
-}
-
-.account-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--plan-muted);
 }
 
 .plan-nav {
