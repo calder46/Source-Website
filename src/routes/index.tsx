@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useRef } from "react";
+import { AcademicStorageBridge } from "@/components/academic-storage-bridge";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,11 +17,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const frame = useRef<HTMLIFrameElement>(null);
   return (
+    <>
+    <AcademicStorageBridge frame={frame} />
     <iframe
+      ref={frame}
       className="source-website-frame"
       src="/source-website/index.html"
       title="FastTrak academic planning website"
     />
+    </>
   );
 }
