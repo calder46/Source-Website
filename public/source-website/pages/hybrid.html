@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FastTrak | Hybrid View</title>
+  <meta name="description" content="Course requirements and course search, side by side.">
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/degree-plan.css">
+  <style>
+    .hybrid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; align-items: start; }
+    .hybrid-pane { min-width: 0; max-height: calc(100vh - 150px); overflow-y: auto; padding-right: 8px; }
+    .hybrid-pane > h2 { position: sticky; top: 0; z-index: 2; margin: 0 0 12px; padding: 8px 0; background: var(--bg, inherit); }
+    .pane-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .enrolled-box { margin-top: 20px; }
+    .enrolled-box summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+    .stub-hidden { display: none !important; }
+    @media (max-width: 900px) {
+      .hybrid-split { grid-template-columns: 1fr; }
+      .hybrid-pane { max-height: none; overflow: visible; }
+    }
+  </style>
+</head>
+<body class="degree-page">
+  <header class="plan-topbar"><a class="plan-brand" href="../index.html">FastTrak <span>Course Registration</span></a><div class="account-actions"><span id="account-state">Guest record</span><button class="btn btn-subtle" id="account-btn">Sign in</button></div></header>
+  <nav class="plan-nav" aria-label="Main navigation"><a href="../index.html">⌂ Home</a><a href="search.html">⌕ Course Search</a><a href="calendar.html">▦ Course Calendar</a><a href="hybrid.html" aria-current="page" title="Requirements + Course Search">◫ Hybrid</a><a href="dcp.html">▣ Degree Completion Plan</a><div class="plan-nav-end"><label class="theme-switch" for="checkbox"><input type="checkbox" id="checkbox" aria-label="Dark theme"><span class="slider"></span></label><select id="view-term" aria-label="Viewing term"><option>Fall 2026</option><option>Spring 2027</option><option>Summer 2027</option></select></div></nav>
+
+  <div class="hybrid-split">
+    <!-- LEFT: Course Requirements (from dcp.html) -->
+    <section class="hybrid-pane requirements-section" aria-label="Course Requirements">
+      <div class="heading-line"><h2>Course Requirements</h2><span id="save-state" role="status">Not saved · sign in to save</span></div>
+      <div class="pane-controls"><label class="degree-choice"><span class="visually-hidden">Current degree</span><select id="degree-select" aria-label="Current degree"></select></label><span id="degree-school"></span></div>
+      <div class="filters-progress"><div class="filter-tabs" role="group" aria-label="Course status filter"><button class="btn btn-primary" data-filter="all">All Courses</button><button class="btn btn-subtle" data-filter="needed">↪ Still Needed</button><button class="btn btn-subtle" data-filter="progress">◷ In Progress</button><button class="btn btn-subtle" data-filter="complete">✓ Complete</button></div><div class="credit-progress"><div id="credit-labels"></div><div class="progress-track"><div id="complete-bar"></div><div id="progress-bar"></div></div></div></div>
+      <div class="course-tools"><button class="text-action" id="toggle-plan-prereqs">Don't display prerequisites</button><button class="btn btn-primary" id="save-record">Save student record</button></div>
+      <div id="requirement-groups"></div>
+    </section>
+
+    <!-- RIGHT: Course Search (from search.html) -->
+    <section class="hybrid-pane" aria-label="Course Search">
+      <h2>Course Search</h2>
+      <div class="search-container" style="margin-bottom: 20px;">
+        <label for="course-search" class="visually-hidden">Search courses</label>
+        <input type="text" id="course-search" placeholder="Type a course name or code (e.g., CS101)...">
+        <button id="toggle-prereqs-btn" class="btn btn-primary" type="button" style="margin-top: 10px;">Don't display prerequisites</button>
+      </div>
+      <div id="course-results" class="course-results"></div>
+      <details class="enrolled-box" open>
+        <summary>Enrolled Classes</summary>
+        <div id="enrolled-list"></div>
+        <button id="unenroll-all-btn" class="btn btn-danger" style="margin-top: 10px; font-size: 0.8rem;">Unenroll All</button>
+      </details>
+    </section>
+  </div>
+
+  <!-- Hidden placeholders so the shared scripts, which also drive the other dcp.html / search.html sections, find the elements they expect. -->
+  <div class="stub-hidden" aria-hidden="true">
+    <div id="student-summary"></div><button id="edit-profile"></button><button id="what-if"></button>
+    <div id="graduation-checks"></div>
+    <button id="download-plan"></button><button id="print-plan"></button><button id="view-sequence"></button>
+    <a id="catalog-source"></a>
+    <aside id="main-sidebar"></aside><button id="sidebar-toggle-floating"></button>
+    <dialog id="profile-dialog"><form id="profile-form"><button type="button" data-close>×</button><select name="campus"><option>Residential</option><option>Online</option></select><select name="academic_standing"><option>Not provided</option></select><input name="gpa"><select name="classification"><option>Not provided</option></select><input name="program_year"></form></dialog>
+    <dialog id="auth-dialog"><form id="auth-form"><button type="button" data-close>×</button><input name="email" type="email"><input name="password" type="password"><p id="auth-feedback"></p><button type="submit">Sign in</button><button type="button" id="create-account">Create account</button><button type="button" id="google-signin">Continue with Google</button></form></dialog>
+    <dialog id="analysis-dialog"><button data-close>×</button><select id="compare-degree"></select><div id="comparison-result"></div></dialog>
+    <dialog id="sequence-dialog"><button data-close>×</button><div id="sequence-content"></div></dialog>
+  </div>
+
+  <script src="../js/courses.js"></script><script src="../js/degrees.js"></script><script src="../js/app.js"></script><script src="../js/degree-plan.js"></script>
+</body>
+</html>
