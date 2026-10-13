@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Preserve the uploaded static website under `public/source-website` and display it through the index route's full-viewport iframe; this keeps the original HTML, styles, scripts, and relative navigation intact for a workspace-only import.
+- Keep illustrative degree definitions separate from the course catalog and reference existing course IDs so totals can be independently validated.
+- Persist academic profiles through the parent frame's generated Cloud client using origin- and frame-validated messages; never send authentication tokens into the static website.
