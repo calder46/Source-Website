@@ -27,11 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const terms = ['Fall', 'Spring', 'Summer'];
     let startYear = 2026;
 
-    for (let year = startYear; year <= startYear + 9; year++) {
-        terms.forEach(term => {
-            if (term === 'Summer' && year === startYear) return; // Start with Fall
-            semesters.push(`${term} ${year}`);
-        });
+    // Correctly generate academic semesters: Fall -> Spring (Next Year) -> Summer (Same Year)
+    for (let i = 0; i < 30; i++) { // Generates 10 years of semesters
+        const term = terms[i % 3];
+        const year = startYear + Math.floor(i / 3) + (term !== 'Fall' ? 1 : 0);
+        semesters.push(`${term} ${year}`);
     }
 
     semesters.forEach(sem => {
@@ -90,14 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c) totalRequiredCredits += c.credits;
         });
 
-        const roadmap = computeRoadmap(finalNeededCourseIds, maxCredits, priority, availableSemesters, totalRequiredCredits);
+        const roadmap = computeRoadmap(finalNeededCourseIds, maxCredits, priority, semesterList, availableSemesters, totalRequiredCredits);
         renderRoadmap(roadmap, plan.name, finalNeededCourseIds);
     }
 
     /**
      * Core Optimization Algorithm: Constrained Topological Sort
      */
-    function computeRoadmap(courseIds, maxCredits, priority, availableSemesters, totalRequiredCredits) {
+    function computeRoadmap(courseIds, maxCredits, priority, semesterNames, availableSemesters, totalRequiredCredits) {
         const schedule = [];
         let remaining = [...new Set(courseIds)];
         let currentSemesterIndex = 1;
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             effectiveMaxCredits = Math.min(maxCredits, idealLoad * 1.2);
         }
 
-        while (remaining.length > 0 && currentSemesterIndex <= 48) {
+        while (remaining.length > 0 && currentSemesterIndex <= semesterNames.length) {
             const semesterCourses = [];
             let currentSemesterCredits = 0;
 
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             schedule.push({
-                term: `Semester ${currentSemesterIndex}`,
+                term: `${semesterNames[currentSemesterIndex - 1]} - Semester ${currentSemesterIndex}`,
                 courses: semesterCourses,
                 totalCredits: currentSemesterCredits
             });
