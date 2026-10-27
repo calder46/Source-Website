@@ -1,19 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>FastTrak | Calendar</title>
 
-  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
+  <script>
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  </script>
 
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/degree-plan.css">
 </head>
-<body class="degree-page">
-<header class="plan-topbar"><a class="plan-brand" href="../index.html">FastTrak <span>Course Registration</span></a></header>
-<nav class="plan-nav" aria-label="Main navigation"><a href="../index.html">⌂ Home</a><a href="search.html">⌕ Course Search</a><a href="calendar.html" aria-current="page">▦ Course Calendar</a><a href="dcp.html">▣ Degree Completion Plan</a><a href="optimizer.html">⚙ Course Optimizer</a><div class="plan-nav-end"><label class="theme-switch" for="checkbox"><input type="checkbox" id="checkbox" aria-label="Dark theme"><span class="slider"></span></label></div></nav>
-<section class="student-band"><div class="student-summary"><div><p class="eyebrow">COURSE REGISTRATION</p><h1 class="band-title">Course Calendar</h1></div></div></section>
+<body>
+
+<header class="plan-topbar">
+  <a class="plan-brand" href="../index.html">FastTrak <span class="visually-hidden">Course Registration</span></a>
+  <div class="account-actions">
+    <span id="account-state">Guest record</span>
+    <button class="btn btn-subtle" id="account-btn">Sign in</button>
+  </div>
+</header>
+
+<nav class="plan-nav" aria-label="Main navigation">
+  <a href="../index.html">⌂ Home</a>
+  <a href="search.html">⌕ Course Search</a>
+  <a href="calendar.html" class="active">▦ Course Calendar</a>
+  <a href="optimizer.html">☕︎ Course Optimizer</a>
+  <a href="dcp.html">▣ Degree Completion Plan</a>
+  <a href="hybrid.html">◫ Hybrid</a>
+  <div class="plan-nav-end">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox" aria-label="Dark theme">
+      <span class="slider"></span>
+    </label>
+    <select id="view-term" aria-label="Viewing term">
+      <option>Fall 2026</option>
+      <option>Spring 2027</option>
+      <option>Summer 2027</option>
+    </select>
+  </div>
+</nav>
 
 <div class="app-layout">
   <aside class="sidebar" id="main-sidebar">
@@ -27,8 +53,8 @@
   <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
 
   <main>
-    
-    <div id="calendar-container" class="requirement-group calendar-panel">
+    <h1>Course Schedule</h1>
+    <div id="calendar-container" style="background: var(--bg-card); padding: 1rem; border-radius: 8px;">
       <table class="schedule-grid">
         <thead>
         <tr>

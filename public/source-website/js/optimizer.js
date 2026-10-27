@@ -27,11 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const terms = ['Fall', 'Spring', 'Summer'];
     let startYear = 2026;
 
-    for (let year = startYear; year <= startYear + 9; year++) {
-        terms.forEach(term => {
-            if (term === 'Summer' && year === startYear) return; // Start with Fall
-            semesters.push(`${term} ${year}`);
-        });
+    // Correctly generate academic semesters: Fall -> Spring (Next Year) -> Summer (Same Year)
+    for (let i = 0; i < 30; i++) { // Generates 10 years of semesters
+        const term = terms[i % 3];
+        const year = startYear + Math.floor(i / 3) + (term !== 'Fall' ? 1 : 0);
+        semesters.push(`${term} ${year}`);
     }
 
     semesters.forEach(sem => {
@@ -52,10 +52,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const plan = degreePlans.find(p => p.id === degreeId);
         if (!plan) return;
 
+        // Get selected semester types from checkboxes
+        const selectedTypes = Array.from(document.querySelectorAll('.opt-semester:checked')).map(cb => cb.value);
+        if (selectedTypes.length === 0) {
+            return alert("Please select at least one semester type to include in your roadmap.");
+        }
+
         let neededCourseIds = [];
         plan.sections.forEach(section => {
             neededCourseIds = [...neededCourseIds, ...section.courseIds];
         });
+
+        // Expand course list to include all prerequisites for required courses
+        const expandedCourseSet = new Set();
+        const courseMap = new Map();
+        courseDatabase.forEach(c => courseMap.set(c.id, c));
+
+        function addWithPrereqs(cid) {
+            if (expandedCourseSet.has(cid)) return;
+            expandedCourseSet.add(cid);
+            const data = courseMap.get(cid);
+            if (data && data.prerequisites) {
+                data.prerequisites.forEach(pId => addWithPrereqs(pId));
+            }
+        }
+
+        neededCourseIds.forEach(cid => addWithPrereqs(cid));
+        const finalNeededCourseIds = Array.from(expandedCourseSet);
 
         const maxCredits = parseInt(maxCreditsInput.value) || 18;
         const priority = prioritySelect.value;
@@ -63,44 +86,79 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate available semesters until target graduation to allow for "stretching"
         const gradSemesterValue = gradSemesterSelect.value;
         const semesterList = Array.from(gradSemesterSelect.options).map(opt => opt.value);
-        const targetIndex = semesterList.indexOf(gradSemesterValue);
-        const availableSemesters = targetIndex > -1 ? targetIndex + 1 : 1;
+        semesterList.indexOf(gradSemesterValue);
+
+        // Filter the semesters to only include those of selected types
+        const filteredSemesterNames = semesterList.filter(semName => {
+            const term = semName.split(' ')[0];
+            return selectedTypes.includes(term);
+        });
+
+        if (filteredSemesterNames.length === 0) {
+            return alert("No semesters match your selection.");
+        }
+
+        // Calculate available semesters until target graduation based on the FILTERED list
+        const targetIndexInOriginal = semesterList.indexOf(gradSemesterValue);
+        const availableSemestersCount = semesterList.slice(0, targetIndexInOriginal + 1)
+            .filter(sem => selectedTypes.includes(sem.split(' ')[0])).length || 1;
 
         // Calculate total credits needed to determine if we should spread them out
         let totalRequiredCredits = 0;
-        courseDatabase.forEach(c => {
-            if (neededCourseIds.includes(c.id)) totalRequiredCredits += c.credits;
+        finalNeededCourseIds.forEach(cid => {
+            const c = courseMap.get(cid);
+            if (c) totalRequiredCredits += c.credits;
         });
 
-        const roadmap = computeRoadmap(neededCourseIds, maxCredits, priority, availableSemesters, totalRequiredCredits);
-        renderRoadmap(roadmap, plan.name, neededCourseIds);
+        const roadmap = computeRoadmap(finalNeededCourseIds, maxCredits, priority, filteredSemesterNames, availableSemestersCount, totalRequiredCredits);
+        renderRoadmap(roadmap, plan.name, finalNeededCourseIds);
     }
 
     /**
      * Core Optimization Algorithm: Constrained Topological Sort
      */
-    function computeRoadmap(courseIds, maxCredits, priority, availableSemesters, totalRequiredCredits) {
+    function computeRoadmap(courseIds, maxCredits, priority, semesterNames, availableSemesters, totalRequiredCredits) {
         const schedule = [];
         let remaining = [...new Set(courseIds)];
         let currentSemesterIndex = 1;
         const courseMap = new Map();
         courseDatabase.forEach(c => courseMap.set(c.id, c));
 
+        // Calculate priority for each course based on the longest dependency chain it starts
+        // This ensures prerequisite chains are prioritized to prevent graduation delays.
+        const priorities = new Map();
+        function getPriority(cid) {
+            if (priorities.has(cid)) return priorities.get(cid);
+            let maxChildPriority = 0;
+            for (const c of courseDatabase) {
+                if (c.prerequisites && c.prerequisites.includes(cid)) {
+                    maxChildPriority = Math.max(maxChildPriority, getPriority(c.id));
+                }
+            }
+            const p = 1 + maxChildPriority;
+            priorities.set(cid, p);
+            return p;
+        }
+
+        // Pre-calculate priorities for all required courses
+        courseIds.forEach(cid => getPriority(cid));
+
         // Determine the effective credit limit for this run
         let effectiveMaxCredits = maxCredits;
         if (availableSemesters > 1 && priority !== "speed") {
             const idealLoad = totalRequiredCredits / availableSemesters;
-            // Use a buffer (e.g., 20%) so we don't get stuck by strict limits when prerequisites are complex
             effectiveMaxCredits = Math.min(maxCredits, idealLoad * 1.2);
         }
 
-        while (remaining.length > 0 && currentSemesterIndex <= 48) {
+        while (remaining.length > 0 && currentSemesterIndex <= semesterNames.length) {
             const semesterCourses = [];
             let currentSemesterCredits = 0;
-            const nextRemaining = [...remaining];
 
-            for (let i = 0; i < nextRemaining.length; i++) {
-                const cid = nextRemaining[i];
+            // Sort remaining courses by priority descending so we pick the ones that unlock most dependencies first
+            remaining.sort((a, b) => (priorities.get(b) || 0) - (priorities.get(a) || 0));
+
+            for (let i = 0; i < remaining.length; i++) {
+                const cid = remaining[i];
                 const data = courseMap.get(cid);
 
                 // If the course isn't in our database, we treat it as having no prereqs to avoid blocking the whole plan
@@ -123,26 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         isMissing: !data
                     });
                     currentSemesterCredits += credits;
-                    nextRemaining.splice(i, 1);
+                    remaining.splice(i, 1);
                     i--;
                 }
             }
 
-            if (semesterCourses.length === 0 && remaining.length > 0) {
+            if (semesterCourses.length === 0) {
+                // If no courses could be scheduled this semester but there are still remaining ones,
+                // it means we've hit a bottleneck or circular dependency.
                 break;
             }
 
-            if (semesterCourses.length > 0) {
-                schedule.push({
-                    term: `Semester ${currentSemesterIndex}`,
-                    courses: semesterCourses,
-                    totalCredits: currentSemesterCredits
-                });
-                remaining = nextRemaining;
-                currentSemesterIndex++;
-            } else {
-                break;
-            }
+            schedule.push({
+                term: `${semesterNames[currentSemesterIndex - 1]} - Semester ${currentSemesterIndex}`,
+                courses: semesterCourses,
+                totalCredits: currentSemesterCredits
+            });
+            currentSemesterIndex++;
         }
 
         return {

@@ -1,128 +1,185 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FastTrak | Completion Plan</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FastTrak | Degree Completion Plan</title>
+  <meta name="description"
+        content="Review your student record and progress toward a 120-credit FastTrak degree plan.">
+  <meta property="og:title" content="FastTrak | Degree Completion Plan">
+  <meta property="og:description"
+        content="Review academic requirements, completed courses, and related electives for ten illustrative degree plans.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/degree-plan.css">
+</head>
+<body class="degree-page">
+<header class="plan-topbar">
+  <a class="plan-brand" href="../index.html">FastTrak <span class="visually-hidden">Course Registration</span></a>
+  <div class="account-actions">
+    <span id="account-state">Guest record</span>
+    <button class="btn btn-subtle" id="account-btn">Sign in</button>
+  </div>
+</header>
 
-    <script>
-      const currentTheme = localStorage.getItem("theme") || "light";
-      document.documentElement.setAttribute("data-theme", currentTheme);
-    </script>
-
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="degree-plan.css" />
-  </head>
-
-  <body>
-    <header class="top-nav">
-      <div class="logo">FastTrak</div>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="index.html">Home</a>
-        <a href="search.html">Course Search</a>
-        <a href="calendar.html">Calendar</a>
-        <a href="dcp.html" class="active" aria-current="page">Completion Plan</a>
-
-        <div class="theme-switch-wrapper">
-          <label class="theme-switch" for="checkbox">
-            <input type="checkbox" id="checkbox" />
-            <span class="slider"></span>
-          </label>
-        </div>
-      </nav>
-    </header>
-
-    <div class="app-layout">
-      <aside class="sidebar" id="main-sidebar">
-        <div class="sidebar-content">
-          <h3>Enrolled Classes</h3>
-          <div id="enrolled-list"></div>
-          <button
-            id="unenroll-all-btn"
-            class="btn btn-danger"
-            style="margin-top: auto; font-size: 0.8rem; align-self: stretch"
-          >
-            Unenroll All
-          </button>
-        </div>
-      </aside>
-
-      <button
-        id="sidebar-toggle-floating"
-        type="button"
-        title="Toggle Sidebar"
-        aria-label="Toggle sidebar"
-      ></button>
-
-      <main class="dashboard-grid">
-        <h1 style="grid-column: 1 / -1">Degree Completion Planner</h1>
-
-        <section
-          id="widget-degree-flow"
-          class="widget degree-flow-widget"
-          aria-labelledby="degree-flow-title"
-        >
-          <p class="flow-eyebrow">DEGREE COURSE PLANNER</p>
-          <h1 id="degree-flow-title">
-            <select
-              id="degree-program"
-              class="degree-title-select"
-              aria-label="Choose a degree program"
-            >
-              <option value="accounting">Accounting Course Plan</option>
-              <option value="biology">Biology Course Plan</option>
-              <option value="math">Math Course Plan</option>
-            </select>
-          </h1>
-          <p id="degree-flow-description">
-            Select an ACCT course, then view its prerequisite flowchart.
-          </p>
-
-          <label for="degree-flow-target">Choose an ACCT course</label>
-          <select id="degree-flow-target">
-            <option value="">Loading courses...</option>
-          </select>
-
-          <button id="show-degree-flow" type="button" aria-expanded="false">
-            View course plan
-          </button>
-
-          <p id="degree-flow-message" aria-live="polite"></p>
-
-          <div id="degree-flow-viewport" class="degree-flow-viewport" hidden>
-            <div id="degree-flowchart" class="degree-flowchart"></div>
-
-            <section class="transfer-branch" aria-labelledby="transfer-branch-title">
-              <h2 id="transfer-branch-title">Possible lower-level elective alternative</h2>
-              <div class="transfer-options">
-                <article class="transfer-option">
-                  <strong>Liberty course</strong>
-                  <span>Complete an eligible lower-level accounting elective.</span>
-                </article>
-
-                <span class="branch-label" aria-hidden="true">OR</span>
-
-                <article class="transfer-option sophia-option">
-                  <strong>Sophia Financial Accounting</strong>
-                  <span
-                    >Listed equivalency: ACCT 1XX — Accounting Elective, Lower Level · 3
-                    credits</span
-                  >
-                </article>
-              </div>
-              <p>
-                Use only if your degree plan has an eligible elective slot. Confirm transfer
-                applicability with Liberty.
-              </p>
-            </section>
-          </div>
-        </section>
-      </main>
+<nav class="plan-nav" aria-label="Main navigation">
+  <a href="../index.html">⌂ Home</a>
+  <a href="search.html">⌕ Course Search</a>
+  <a href="calendar.html">▦ Course Calendar</a>
+  <a href="optimizer.html">☕︎ Course Optimizer</a>
+  <a href="dcp.html" class="active">▣ Degree Completion Plan</a>
+  <a href="hybrid.html">◫ Hybrid</a>
+  <div class="plan-nav-end">
+    <label class="theme-switch" for="checkbox">
+      <input type="checkbox" id="checkbox" aria-label="Dark theme">
+      <span class="slider"></span>
+    </label>
+    <select id="view-term" aria-label="Viewing term">
+      <option>Fall 2026</option>
+      <option>Spring 2027</option>
+      <option>Summer 2027</option>
+    </select>
+  </div>
+</nav>
+<section class="student-band">
+  <div id="student-summary" class="student-summary"></div>
+  <button id="edit-profile" class="btn btn-subtle">✎ Edit student details</button>
+  <button id="what-if" class="btn btn-primary">What-If Analysis</button>
+</section>
+<main class="plan-main">
+  <section class="overview-band">
+    <div class="heading-line">
+      <div>
+        <p class="eyebrow">ACADEMIC RECORD</p>
+        <h1>Degree Completion Plan</h1>
+      </div>
+      <span id="save-state" role="status">Not saved · sign in to save</span>
     </div>
-
-    <script src="js/courses.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/prerequisite-flow.js"></script>
-    <script src="js/degree-plan-visual.js"></script>
-  </body>
+    <div class="degree-tabs">
+      <label class="degree-choice">
+        <span class="visually-hidden">Current degree</span><select id="degree-select" aria-label="Current degree"></select>
+      </label><span id="degree-school"></span>
+    </div>
+    <p class="eyebrow">GRADUATION REQUIREMENTS</p>
+    <div id="graduation-checks" class="graduation-checks"></div>
+  </section>
+  <section class="requirements-section">
+    <div class="heading-line">
+      <h2>Course Requirements</h2>
+      <div class="export-actions">
+        <button id="download-plan" class="text-action">↓ Download plan</button>
+        <button id="print-plan" class="text-action">▧ Print / Save PDF</button>
+        <button id="view-sequence" class="text-action">View Course Sequence</button>
+      </div>
+    </div>
+    <p class="plan-notice">
+      Illustrative FastTrak plan · 120 credits. Courses come from the generated catalog; this
+      is not an official Liberty University degree audit. <a id="catalog-source" target="_blank"
+                                                             rel="noopener noreferrer">
+      Liberty catalog reference
+      ↗
+    </a>
+    </p>
+    <div class="filters-progress">
+      <div class="filter-tabs" role="group" aria-label="Course status filter">
+        <button class="btn btn-primary" data-filter="all">All Courses</button>
+        <button class="btn btn-subtle" data-filter="needed">↪ Still Needed</button>
+        <button class="btn btn-subtle" data-filter="progress">◷ In Progress</button>
+        <button class="btn btn-subtle" data-filter="complete">✓ Complete</button>
+      </div>
+      <div class="credit-progress">
+        <div id="credit-labels"></div>
+        <div class="progress-track">
+          <div id="complete-bar"></div>
+          <div id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-tools">
+      <button class="text-action" id="toggle-plan-prereqs">Don't display prerequisites</button>
+      <button class="btn btn-primary" id="save-record">Save student record</button>
+    </div>
+    <div id="requirement-groups"></div>
+  </section>
+</main>
+<dialog id="profile-dialog">
+  <form id="profile-form">
+    <div class="dialog-heading">
+      <h2>Student details</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close student details">×</button>
+    </div>
+    <div class="form-grid">
+      <label>
+        Campus<select name="campus">
+        <option>Residential</option>
+        <option>Online</option>
+      </select>
+      </label><label>
+      Academic standing<select name="academic_standing">
+      <option>Not provided</option>
+      <option>Good Standing</option>
+      <option>Academic Warning</option>
+      <option>Academic Probation</option>
+    </select>
+    </label><label>
+      Overall GPA<input name="gpa" type="number" min="0" max="4" step="0.01"
+                        placeholder="Not provided">
+    </label><label>
+      Classification<select name="classification">
+      <option>Not provided</option>
+      <option>Freshman</option>
+      <option>Sophomore</option>
+      <option>Junior</option>
+      <option>Senior</option>
+    </select>
+    </label><label>Program year<input name="program_year" maxlength="20" required></label>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-primary" type="submit">Apply details</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="auth-dialog">
+  <form id="auth-form">
+    <div class="dialog-heading">
+      <h2>Student account</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close account">×</button>
+    </div>
+    <label>Email<input name="email" type="email" required autocomplete="email"></label><label>
+    Password<input name="password" type="password" required minlength="8" autocomplete="current-password">
+  </label>
+    <p id="auth-feedback" role="status"></p>
+    <div class="dialog-footer">
+      <button class="btn btn-primary" type="submit">Sign in</button>
+      <button class="btn btn-subtle" type="button" id="create-account">Create account</button>
+    </div>
+    <button class="btn btn-subtle google-button" type="button" id="google-signin">Continue with Google</button>
+  </form>
+</dialog>
+<dialog id="analysis-dialog">
+  <div class="dialog-heading">
+    <h2>What-If Analysis</h2>
+    <button class="icon-btn" data-close aria-label="Close analysis">×</button>
+  </div>
+  <label>Compare another degree<select id="compare-degree"></select></label>
+  <div id="comparison-result"></div>
+</dialog>
+<dialog id="sequence-dialog">
+  <div class="dialog-heading">
+    <h2>Suggested Course Sequence</h2>
+    <button class="icon-btn" data-close aria-label="Close sequence">×</button>
+  </div>
+  <p class="plan-notice">
+    Illustrative order by course level. Prerequisites and term availability require advisor
+    review.
+  </p>
+  <div id="sequence-content"></div>
+</dialog>
+<script src="../js/courses.js"></script>
+<script src="../js/degrees.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/degree-plan.js"></script>
+</body>
 </html>

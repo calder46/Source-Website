@@ -55,3 +55,37 @@
 }
 
 .badge-credits { background: #e0e7ff; color: #4338ca; }
+
+.semester-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.semester-labels, .semester-checkboxes {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.semester-labels span {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    flex: 1;
+    text-align: center;
+}
+
+.semester-checkboxes label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    flex: 1;
+}
+
+.semester-checkboxes input {
+    margin-bottom: 4px;
+}

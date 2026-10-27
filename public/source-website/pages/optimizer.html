@@ -81,10 +81,26 @@
 
                 <div class="control-group">
                     <label>Optimization Priority</label>
-                    <select id="opt-priority" class="select-input" style="width: 100%; padding: 8px; border-radius: 4px;">
+                    <label for="opt-priority"></label><select id="opt-priority" class="select-input" style="width: 100%; padding: 8px; border-radius: 4px;">
                         <option value="speed">🚀 Quickest Graduation</option>
                         <option value="balance">⚖️ Balanced Workload</option>
                     </select>
+                </div>
+
+                <div class="control-group" style="margin-bottom: 15px;">
+                    <label>Included Semesters</label>
+                    <div class="semester-selection">
+                        <div class="semester-labels">
+                            <span>Fall</span>
+                            <span>Spring</span>
+                            <span>Summer</span>
+                        </div>
+                        <div class="semester-checkboxes">
+                            <label><input type="checkbox" class="opt-semester" value="Fall" checked></label>
+                            <label><input type="checkbox" class="opt-semester" value="Spring" checked></label>
+                            <label><input type="checkbox" class="opt-semester" value="Summer"></label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
