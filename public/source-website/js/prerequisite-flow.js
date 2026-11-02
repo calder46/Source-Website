@@ -79,8 +79,10 @@
     const select = document.querySelector("#prerequisite-target");
     const output = document.querySelector("#prerequisite-output");
 
+    if (!select && !output) return;
+
     if (!select || !output) {
-      console.error("Planner elements are missing from dcp.html.");
+      console.error("Prerequisite widget elements are missing.");
       return;
     }
 
