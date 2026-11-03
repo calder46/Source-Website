@@ -1,74 +1,92 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>FastTrak | Course Search</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>FastTrak | Course Search</title>
 
-  <script>
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-  </script>
+    <script>
+      const currentTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", currentTheme);
+    </script>
 
-  <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header class="plan-topbar">
+      <a class="plan-brand" href="../index.html"
+        >FastTrak <span class="visually-hidden">Course Registration</span></a
+      >
+      <div class="account-actions">
+        <span id="account-state">Guest record</span>
+        <button class="btn btn-subtle" id="account-btn">Sign in</button>
+      </div>
+    </header>
 
-<header class="plan-topbar">
-  <a class="plan-brand" href="../index.html">FastTrak <span class="visually-hidden">Course Registration</span></a>
-  <div class="account-actions">
-    <span id="account-state">Guest record</span>
-    <button class="btn btn-subtle" id="account-btn">Sign in</button>
-  </div>
-</header>
+    <nav class="plan-nav" aria-label="Main navigation">
+      <a href="../index.html">⌂ Home</a>
+      <a href="search.html" class="active">⌕ Course Search</a>
+      <a href="prerequisite.html">⇢ Prerequisite Finder</a>
+      <a href="calendar.html">▦ Course Calendar</a>
+      <a href="optimizer.html">☕︎ Course Optimizer</a>
+      <a href="dcp.html">▣ Degree Completion Plan</a>
+      <a href="hybrid.html">◫ Hybrid</a>
+      <div class="plan-nav-end">
+        <label class="theme-switch" for="checkbox">
+          <input type="checkbox" id="checkbox" aria-label="Dark theme" />
+          <span class="slider"></span>
+        </label>
+        <select id="view-term" aria-label="Viewing term">
+          <option>Fall 2026</option>
+          <option>Spring 2027</option>
+          <option>Summer 2027</option>
+        </select>
+      </div>
+    </nav>
 
-<nav class="plan-nav" aria-label="Main navigation">
-  <a href="../index.html">⌂ Home</a>
-  <a href="search.html" class="active">⌕ Course Search</a>
-  <a href="calendar.html">▦ Course Calendar</a>
-  <a href="optimizer.html">☕︎ Course Optimizer</a>
-  <a href="dcp.html">▣ Degree Completion Plan</a>
-  <a href="hybrid.html">◫ Hybrid</a>
-  <div class="plan-nav-end">
-    <label class="theme-switch" for="checkbox">
-      <input type="checkbox" id="checkbox" aria-label="Dark theme">
-      <span class="slider"></span>
-    </label>
-    <select id="view-term" aria-label="Viewing term">
-      <option>Fall 2026</option>
-      <option>Spring 2027</option>
-      <option>Summer 2027</option>
-    </select>
-  </div>
-</nav>
+    <div class="app-layout">
+      <aside class="sidebar" id="main-sidebar">
+        <div class="sidebar-content">
+          <h3>Enrolled Classes</h3>
+          <div id="enrolled-list"></div>
+          <button
+            id="unenroll-all-btn"
+            class="btn btn-danger"
+            style="margin-top: auto; font-size: 0.8rem; align-self: stretch"
+          >
+            Unenroll All
+          </button>
+        </div>
+      </aside>
 
-<div class="app-layout">
-  <aside class="sidebar" id="main-sidebar">
-    <div class="sidebar-content">
-      <h3>Enrolled Classes</h3>
-      <div id="enrolled-list"></div>
-      <button id="unenroll-all-btn" class="btn btn-danger" style="margin-top: auto; font-size: 0.8rem; align-self: stretch;">Unenroll All</button>
+      <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
+
+      <main>
+        <h1>Course Search</h1>
+        <div class="search-container" style="margin-bottom: 30px">
+          <label for="course-search" class="visually-hidden">Search courses</label>
+          <input
+            type="text"
+            id="course-search"
+            placeholder="Type a course name or code (e.g., CS101)..."
+          />
+          <button
+            id="toggle-prereqs-btn"
+            class="btn btn-primary"
+            type="button"
+            style="margin-top: 10px"
+          >
+            Don't display prerequisites
+          </button>
+        </div>
+
+        <!-- This container will be filled by JavaScript -->
+        <div id="course-results" class="course-results">
+          <!-- Search results appear here -->
+        </div>
+      </main>
     </div>
-  </aside>
 
-  <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
-
-  <main>
-    <h1>Course Search</h1>
-    <div class="search-container" style="margin-bottom: 30px;">
-      <label for="course-search" class="visually-hidden">Search courses</label>
-      <input type="text" id="course-search" placeholder="Type a course name or code (e.g., CS101)...">
-      <button id="toggle-prereqs-btn" class="btn btn-primary" type="button" style="margin-top: 10px;">Don't display prerequisites</button>
-    </div>
-
-    <!-- This container will be filled by JavaScript -->
-    <div id="course-results" class="course-results">
-      <!-- Search results appear here -->
-    </div>
-  </main>
-</div>
-
-<script src="../js/courses.js"></script>
-<script src="../js/app.js"></script>
-</body>
+    <script src="../js/courses.js"></script>
+    <script src="../js/app.js"></script>
+  </body>
 </html>
