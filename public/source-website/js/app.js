@@ -119,6 +119,279 @@ const initTheme = () => {
 };
 
 // Search & Render Logic
+const escapeCourseMarkup = (value) => String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+}[character]));
+
+const coursesByPrerequisite = new Map();
+courseDatabase.forEach(course => {
+    if (!Array.isArray(course.prerequisites)) return;
+
+    course.prerequisites.forEach(prerequisite => {
+        const requiredBy = coursesByPrerequisite.get(prerequisite) || [];
+        requiredBy.push(course);
+        coursesByPrerequisite.set(prerequisite, requiredBy);
+    });
+});
+
+const transferStatusLabels = {
+    'verified-liberty-guide': 'Listed in a Liberty transfer guide',
+    'official-needs-confirmation': 'Official source; confirm current applicability',
+    'unverified-suggestion': 'Unverified suggestion; not an approved equivalency'
+};
+
+const transferGuideDefinitions = [
+    {
+        name: 'Study.com',
+        fileName: 'Studycom.csv',
+        url: 'https://dcfwfuaf91uza.cloudfront.net/online/wp-content/uploads/Study.com-Course-Equivalency-Guide.pdf'
+    },
+    {
+        name: 'StraighterLine',
+        fileName: 'StraighterLine.csv',
+        url: 'https://www.liberty.edu/residential/wp-content/uploads/Straighterline-Transfer-Equivalency-Guide-Finalized.pdf'
+    },
+    {
+        name: 'Liberty Online Academy',
+        fileName: 'LUOA-Equivalency-Chart.csv',
+        url: 'https://dcfwfuaf91uza.cloudfront.net/online-academy/wp-content/uploads/LUOA-Equivalency-Chart.pdf'
+    }
+].map(guide => ({
+    ...guide,
+    dataUrl: new URL(`../data/transfer-guides/${guide.fileName}`, document.currentScript.src).href
+}));
+
+const cleanTransferValue = value => String(value ?? '')
+    .replace(/[\u200B-\u200D\uFEFF\u00AD]/g, '')
+    .trim();
+
+const parseCsv = text => {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let insideQuotes = false;
+
+    for (let index = 0; index < text.length; index += 1) {
+        const character = text[index];
+        if (insideQuotes) {
+            if (character === '"' && text[index + 1] === '"') {
+                field += '"';
+                index += 1;
+            } else if (character === '"') {
+                insideQuotes = false;
+            } else {
+                field += character;
+            }
+        } else if (character === '"' && field.length === 0) {
+            insideQuotes = true;
+        } else if (character === ',') {
+            row.push(cleanTransferValue(field));
+            field = '';
+        } else if (character === '\n' || character === '\r') {
+            row.push(cleanTransferValue(field));
+            if (row.some(Boolean)) rows.push(row);
+            row = [];
+            field = '';
+            if (character === '\r' && text[index + 1] === '\n') index += 1;
+        } else {
+            field += character;
+        }
+    }
+
+    row.push(cleanTransferValue(field));
+    if (row.some(Boolean)) rows.push(row);
+    if (insideQuotes) throw new Error('CSV contains an unterminated quoted field.');
+    return rows;
+};
+
+const parseTransferGuide = (guide, text) => {
+    const rows = parseCsv(text);
+    if (guide.fileName === 'LUOA-Equivalency-Chart.csv') {
+        const header = rows[0]?.map(value => value.toLowerCase()) || [];
+        const providerCodeIndex = header.indexOf('luoa_course_code');
+        const providerTitleIndex = header.indexOf('luoa_course_title');
+        const libertyCodeIndex = header.indexOf('luo_course_code');
+        if (providerCodeIndex < 0 || providerTitleIndex < 0 || libertyCodeIndex < 0) {
+            throw new Error('LUOA CSV is missing expected course columns.');
+        }
+        return rows.slice(1).map(row => ({
+            provider: guide.name,
+            providerCourseCode: row[providerCodeIndex] || '',
+            providerCourseTitle: row[providerTitleIndex] || '',
+            libertyCourseCode: row[libertyCodeIndex] || '',
+            libertyCourseTitle: '',
+            providerCredits: '',
+            libertyCredits: '',
+            guideUrl: guide.url
+        })).filter(record => record.providerCourseCode && record.libertyCourseCode);
+    }
+
+    const headerIndex = rows.findIndex(row =>
+        row.some(value => value.toLowerCase() === 'ace number') &&
+        row.some(value => value.toLowerCase() === 'course title')
+    );
+    if (headerIndex < 0) throw new Error(`${guide.name} CSV is missing its course table header.`);
+
+    return rows.slice(headerIndex + 1).map(row => ({
+        provider: guide.name,
+        providerCourseCode: row[1] || '',
+        providerCourseTitle: [row[2], row[3]].filter(Boolean).join(' — '),
+        providerCredits: row[4] || '',
+        libertyCourseCode: row[5] || '',
+        libertyCourseTitle: row[6] || '',
+        libertyCredits: row[7] || '',
+        guideUrl: guide.url
+    })).filter(record => record.providerCourseCode && record.libertyCourseCode);
+};
+
+let transferGuideDataPromise;
+const loadTransferGuideData = () => {
+    if (!transferGuideDataPromise) {
+        transferGuideDataPromise = Promise.allSettled(
+            transferGuideDefinitions.map(async guide => {
+                const response = await fetch(guide.dataUrl);
+                if (!response.ok) {
+                    throw new Error(`${guide.fileName} could not be loaded (HTTP ${response.status}).`);
+                }
+                return parseTransferGuide(guide, await response.text());
+            })
+        ).then(results => {
+            const records = [];
+            const errors = [];
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    records.push(...result.value);
+                } else {
+                    console.error(`Transfer guide ${transferGuideDefinitions[index].fileName} could not be read.`, result.reason);
+                    errors.push(`${transferGuideDefinitions[index].name}: ${result.reason.message}`);
+                }
+            });
+            return { records, errors };
+        });
+    }
+    return transferGuideDataPromise;
+};
+
+const courseCodesIn = value => cleanTransferValue(value)
+    .toUpperCase()
+    .match(/[A-Z]{2,6}\s+\d{3}[A-Z]?/g)
+    ?.map(code => code.replace(/\s+/g, ' ')) || [];
+
+const appendExternalLink = (parent, label, url) => {
+    try {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.protocol !== 'https:') throw new Error('Only HTTPS source links are allowed.');
+        const link = document.createElement('a');
+        link.href = parsedUrl.href;
+        link.textContent = `${label} ↗`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        parent.appendChild(link);
+    } catch (error) {
+        console.error(`Could not add ${label} link.`, error);
+    }
+};
+
+const renderPrerequisiteTransferOptions = async (courseCode, panel) => {
+    panel.replaceChildren();
+    const course = courseDatabase.find(record => record.id === courseCode);
+    const heading = document.createElement('h4');
+    heading.textContent = `Transfer options for ${courseCode}${course ? `: ${course.name}` : ''}`;
+    panel.appendChild(heading);
+    const loading = document.createElement('p');
+    loading.textContent = 'Checking the available transfer guides…';
+    panel.appendChild(loading);
+
+    let importedRecords = [];
+    let importedDataError = '';
+    const storedData = localStorage.getItem('fasttrak-prerequisite-transfer-data');
+    if (storedData) {
+        try {
+            const imported = JSON.parse(storedData);
+            const course = Array.isArray(imported.courses)
+                ? imported.courses.find(record =>
+                    cleanTransferValue(record.courseCode).toUpperCase() === courseCode.toUpperCase())
+                : null;
+            if (course && Array.isArray(imported.transferEquivalencies)) {
+                const institutions = new Map(
+                    (Array.isArray(imported.sendingInstitutions) ? imported.sendingInstitutions : [])
+                        .map(institution => [institution.id, institution])
+                );
+                importedRecords = imported.transferEquivalencies
+                    .filter(record => record.universityCourseId === course.id)
+                    .map(record => ({
+                        ...record,
+                        institution: institutions.get(record.sendingInstitutionId)
+                    }));
+            }
+        } catch (error) {
+            console.error('Saved transfer data could not be read.', error);
+            importedDataError = 'Saved transfer data could not be read. Re-import a valid JSON guide file on the Prerequisite Finder page.';
+        }
+    }
+
+    const { records, errors } = await loadTransferGuideData();
+    const normalizedCourseCode = cleanTransferValue(courseCode).toUpperCase();
+    const guideMatches = records.filter(record =>
+        courseCodesIn(record.libertyCourseCode).includes(normalizedCourseCode)
+    );
+    panel.replaceChildren(heading);
+
+    for (const record of importedRecords) {
+        const option = document.createElement('article');
+        option.className = 'prerequisite-transfer-option';
+        const status = transferStatusLabels[record.equivalencyStatus] || 'Status unavailable; verify with Liberty';
+        const institutionName = record.institution?.name || 'Sending institution';
+        const title = document.createElement('strong');
+        title.textContent = `${institutionName}: ${record.sendingCourseCode} — ${record.sendingCourseTitle}`;
+        const details = document.createElement('p');
+        details.textContent = `${record.sendingCreditHours} credits · ${status}${record.lastVerifiedDate ? ` · Last verified ${record.lastVerifiedDate}` : ' · Verification date not provided'}`;
+        const equivalent = document.createElement('p');
+        equivalent.textContent = `Liberty equivalent: ${record.libertyEquivalentCourseCode || courseCode}`;
+        option.append(title, details, equivalent);
+        if (record.sourceUrl) appendExternalLink(option, 'Equivalency source', record.sourceUrl);
+        if (record.sendingCourseCatalogUrl) appendExternalLink(option, 'Provider catalog', record.sendingCourseCatalogUrl);
+        panel.appendChild(option);
+    }
+
+    for (const record of guideMatches) {
+        const option = document.createElement('article');
+        option.className = 'prerequisite-transfer-option';
+        const title = document.createElement('strong');
+        title.textContent = `${record.provider}: ${record.providerCourseCode} — ${record.providerCourseTitle}`;
+        const details = document.createElement('p');
+        details.textContent = `Provider credits: ${record.providerCredits || 'Not listed'}`;
+        const equivalent = document.createElement('p');
+        equivalent.textContent = `Liberty equivalent: ${record.libertyCourseCode}${record.libertyCourseTitle ? ` — ${record.libertyCourseTitle}` : ''}${record.libertyCredits ? ` (${record.libertyCredits} credits)` : ''}`;
+        option.append(title, details, equivalent);
+        appendExternalLink(option, 'Transfer guide source', record.guideUrl);
+        panel.appendChild(option);
+    }
+
+    if (!importedRecords.length && !guideMatches.length) {
+        const unavailable = document.createElement('p');
+        unavailable.textContent = 'No transfer equivalencies were found.';
+        panel.appendChild(unavailable);
+    }
+    if (importedDataError) {
+        const importError = document.createElement('p');
+        importError.textContent = importedDataError;
+        panel.appendChild(importError);
+    }
+    if (errors.length) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = `Some transfer guides could not be loaded: ${errors.join('; ')}`;
+        panel.appendChild(errorMessage);
+    }
+    const note = document.createElement('p');
+    note.textContent = 'Confirm current transfer applicability with Liberty before enrolling.';
+    panel.appendChild(note);
+};
+
 const renderSearchResults = (filterText = "") => {
     const resultsContainer = document.getElementById('course-results');
     if (!resultsContainer) return;
@@ -137,9 +410,13 @@ const renderSearchResults = (filterText = "") => {
         const uniCost = universities[course.univ]?.costPerCredit || 0;
         const tuition = course.credits * uniCost;
         const isEnrolled = getEnrolledCourses().some(e => e.id === course.id);
+        const requiredBy = coursesByPrerequisite.get(course.id) || [];
+        const requiredFor = requiredBy.length
+            ? requiredBy.map(requiredCourse => `<button type="button" class="prerequisite-transfer-toggle course-required-for-button" data-course-id="${escapeCourseMarkup(requiredCourse.id)}">${escapeCourseMarkup(requiredCourse.id)}: ${escapeCourseMarkup(requiredCourse.name)}</button>`).join(' ')
+            : 'None';
 
         return `
-                <div class="course-card">
+                <div class="course-card" data-course-id="${escapeCourseMarkup(course.id)}" tabindex="-1">
                     <h3>${course.id}: ${course.name}</h3>
                     <p><em>${course.univ} | Professor: ${course.prof}</em></p>
                     ${course.desc}
@@ -148,10 +425,25 @@ const renderSearchResults = (filterText = "") => {
                         <hr style="margin: 10px 0; opacity: 0.2;">
                         <div class="course-details">
                             <span>Credits: ${course.credits}</span> | 
-                            <strong>Tuition Cost: $${tuition}</strong>
+                            <strong>Estimated tuition: $${tuition}</strong>
+                            <small class="tuition-estimate-note">Illustrative estimate at $${uniCost} per credit; confirm current tuition with the institution.</small>
                         </div>
                         <div class="course-prereqs">
-                            <strong>Prerequisites:</strong> ${(course.prerequisites && course.prerequisites.length) ? course.prerequisites.join(', ') : 'None'}
+                                            <strong>Prerequisites:</strong> ${(course.prerequisites && course.prerequisites.length) ? course.prerequisites.map((prerequisite, index) => {
+                                                const panelId = `transfer-options-${course.id}-${index}`.replace(/[^a-zA-Z0-9_-]/g, '-');
+                                                const prerequisiteCourse = courseDatabase.find(record => record.id === prerequisite);
+                                                const prerequisiteLabel = prerequisiteCourse
+                                                    ? `${prerequisiteCourse.id}: ${prerequisiteCourse.name}`
+                                                    : prerequisite;
+                                                return `<button type="button" class="prerequisite-transfer-toggle" data-prerequisite-code="${escapeCourseMarkup(prerequisite)}" aria-controls="${panelId}" aria-expanded="false">${escapeCourseMarkup(prerequisiteLabel)}</button>`;
+                                            }).join(' ') : 'None'}
+                                            ${(course.prerequisites || []).map((_, index) => {
+                                                const panelId = `transfer-options-${course.id}-${index}`.replace(/[^a-zA-Z0-9_-]/g, '-');
+                                                return `<div id="${panelId}" class="prerequisite-transfer-options" hidden></div>`;
+                                            }).join('')}
+                                            <div class="course-required-for">
+                                                <strong>Required for:</strong> ${requiredFor}
+                                            </div>
                         </div>
                         <button class="enroll-btn btn ${isEnrolled ? 'btn-danger' : 'btn-primary'}" 
                                 data-id="${course.id}" 
@@ -234,6 +526,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsEl = document.getElementById('course-results');
     if (resultsEl) {
         resultsEl.addEventListener('click', (e) => {
+            const requiredForButton = e.target.closest('.course-required-for-button');
+            if (requiredForButton) {
+                searchInput.value = requiredForButton.dataset.courseId;
+                renderSearchResults(searchInput.value);
+                const courseCard = Array.from(resultsEl.querySelectorAll('.course-card'))
+                    .find(card => card.dataset.courseId === requiredForButton.dataset.courseId);
+                if (courseCard) {
+                    courseCard.focus({ preventScroll: true });
+                    courseCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return;
+            }
+
+            const prerequisiteButton = e.target.closest('.prerequisite-transfer-toggle');
+            if (prerequisiteButton) {
+                const panelId = prerequisiteButton.getAttribute('aria-controls');
+                const panel = document.getElementById(panelId);
+                if (!panel) {
+                    console.error(`Transfer options panel ${panelId} is missing.`);
+                    return;
+                }
+                const isOpen = prerequisiteButton.getAttribute('aria-expanded') === 'true';
+                document.querySelectorAll('.prerequisite-transfer-options.is-open').forEach(openPanel => {
+                    if (openPanel !== panel) {
+                        openPanel.hidden = true;
+                        openPanel.classList.remove('is-open');
+                        const openButton = Array.from(resultsEl.querySelectorAll('.prerequisite-transfer-toggle[aria-expanded="true"]'))
+                            .find(button => button.getAttribute('aria-controls') === openPanel.id);
+                        if (openButton) openButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                if (isOpen) {
+                    panel.hidden = true;
+                    panel.classList.remove('is-open');
+                    prerequisiteButton.setAttribute('aria-expanded', 'false');
+                } else {
+                    panel.hidden = false;
+                    panel.classList.add('is-open');
+                    prerequisiteButton.setAttribute('aria-expanded', 'true');
+                    renderPrerequisiteTransferOptions(prerequisiteButton.dataset.prerequisiteCode, panel)
+                        .catch(error => {
+                            console.error('Transfer guide matches could not be displayed.', error);
+                            panel.replaceChildren();
+                            const message = document.createElement('p');
+                            message.textContent = 'Transfer guide matches could not be displayed. Check the browser console for details.';
+                            panel.appendChild(message);
+                        });
+                }
+                return;
+            }
+
             const btn = e.target.closest('.enroll-btn');
             if (!btn) return;
             const courseId = btn.dataset.id;
