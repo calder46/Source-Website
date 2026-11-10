@@ -34,7 +34,7 @@
   dlg.className = "assistant-dialog";
   dlg.setAttribute("aria-label", "FastTrak AI assistant");
   dlg.innerHTML = `<div class="assistant-inner">
-    <div class="assistant-head"><span>FastTrak Assistant</span><button class="assistant-close" aria-label="Close">×</button></div>
+    <div class="assistant-head"><span>FastTrak Assistant · Qwen3</span><span><button type="button" class="assistant-clear btn btn-subtle" style="padding:3px 8px;font-size:12px">Clear chat</button> <button class="assistant-close" aria-label="Close">×</button></span></div>
     <div class="assistant-log" aria-live="polite"></div>
     <form class="assistant-form"><textarea rows="2" placeholder="Ask about courses, prerequisites, your plan…" aria-label="Message"></textarea><button class="btn btn-primary" type="submit">Send</button></form>
   </div>`;
@@ -44,7 +44,17 @@
   const form = dlg.querySelector("form");
   const input = dlg.querySelector("textarea");
   const sendBtn = form.querySelector("button");
-  const history = [];
+  const HISTORY_KEY = "fasttrak_chat_history";
+  let history = [];
+  try { const saved = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || "[]"); if (Array.isArray(saved)) history = saved.filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-30); } catch {}
+  const saveHistory = () => { try { sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-30))); } catch {} };
+  function studentContext() {
+    try {
+      const enrolled = JSON.parse(localStorage.getItem("enrolled_courses") || "[]");
+      if (!Array.isArray(enrolled) || !enrolled.length) return "";
+      return "Courses the student added to their calendar: " + enrolled.slice(0, 40).map((c) => [c.code || c.id, c.title || c.name].filter(Boolean).join(" ")).join("; ").slice(0, 1500);
+    } catch { return ""; }
+  }
 
   function esc(s) {
     return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -64,8 +74,37 @@
     log.scrollTop = log.scrollHeight;
     return d;
   }
-  add("assistant", "Hi! I can help with course search, prerequisites, scheduling and your degree plan. What do you need?");
+  const GREETING = "Would you like help with 1. Information regarding a specific course, 2. Deciding a course order, 3. Making a custom curriculum, or 4. Something else?";
+  function renderAll() { log.innerHTML = ""; add("assistant", GREETING); history.forEach((m) => add(m.role, m.content)); }
+  renderAll();
 
+  function askLocal(messages, onProgress) {
+    return new Promise((resolve, reject) => {
+      if (window.parent === window) {
+        reject(new Error("Open the assistant through the FastTrak app to use the browser model."));
+        return;
+      }
+      const requestId = crypto.randomUUID();
+      function receive(event) {
+        if (event.origin !== window.location.origin || event.source !== window.parent || event.data?.type !== "browser-assistant-response" || event.data.requestId !== requestId) return;
+        const data = event.data;
+        if (typeof data.progress === "string") { onProgress(data.progress); return; }
+        cleanup();
+        if (data.error) reject(new Error(data.error));
+        else if (typeof data.reply === "string") resolve(data.reply);
+        else reject(new Error("The local model returned an invalid answer."));
+      }
+      function cleanup() { clearTimeout(timer); window.removeEventListener("message", receive); }
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error("The local model took too long. Check your connection and try again."));
+      }, 15 * 60 * 1000);
+      window.addEventListener("message", receive);
+      window.parent.postMessage({ type: "browser-assistant-request", requestId, messages, context: studentContext() }, window.location.origin);
+    });
+  }
+
+  dlg.querySelector(".assistant-clear").addEventListener("click", () => { history = []; saveHistory(); renderAll(); });
   btn.addEventListener("click", () => { dlg.showModal(); input.focus(); });
   dlg.querySelector(".assistant-close").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
@@ -77,24 +116,22 @@
     e.preventDefault();
     const text = input.value.trim();
     if (!text || sendBtn.disabled) return;
+    if (text.length > 4000) { add("assistant", "Please keep your message under 4,000 characters."); return; }
     input.value = "";
     add("user", text);
     history.push({ role: "user", content: text });
+    saveHistory();
     sendBtn.disabled = true;
     const pending = add("assistant", "Thinking…");
     try {
-      const r = await fetch("/api/public/assistant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Something went wrong.");
-      pending.innerHTML = md(data.reply);
-      history.push({ role: "assistant", content: data.reply });
+      const reply = await askLocal(history.slice(-30), (progress) => { pending.textContent = progress; });
+      pending.innerHTML = md(reply);
+      history.push({ role: "assistant", content: reply });
+      saveHistory();
     } catch (err) {
       pending.textContent = err.message || "Something went wrong.";
       history.pop();
+      saveHistory();
     } finally {
       sendBtn.disabled = false;
       input.focus();
