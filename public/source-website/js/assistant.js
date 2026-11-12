@@ -34,7 +34,7 @@
   dlg.className = "assistant-dialog";
   dlg.setAttribute("aria-label", "FastTrak AI assistant");
   dlg.innerHTML = `<div class="assistant-inner">
-    <div class="assistant-head"><span>FastTrak Assistant · Qwen3</span><span><button type="button" class="assistant-clear btn btn-subtle" style="padding:3px 8px;font-size:12px">Clear chat</button> <button class="assistant-close" aria-label="Close">×</button></span></div>
+    <div class="assistant-head"><span>FastTrak Assistant</span><span><button type="button" class="assistant-clear btn btn-subtle" style="padding:3px 8px;font-size:12px">Clear chat</button> <button class="assistant-close" aria-label="Close">×</button></span></div>
     <div class="assistant-log" aria-live="polite"></div>
     <form class="assistant-form"><textarea rows="2" placeholder="Ask about courses, prerequisites, your plan…" aria-label="Message"></textarea><button class="btn btn-primary" type="submit">Send</button></form>
   </div>`;
@@ -81,7 +81,7 @@
   function askLocal(messages, onProgress) {
     return new Promise((resolve, reject) => {
       if (window.parent === window) {
-        reject(new Error("Open the assistant through the FastTrak app to use the browser model."));
+        reject(new Error("Open the assistant through the FastTrak app."));
         return;
       }
       const requestId = crypto.randomUUID();
@@ -92,13 +92,13 @@
         cleanup();
         if (data.error) reject(new Error(data.error));
         else if (typeof data.reply === "string") resolve(data.reply);
-        else reject(new Error("The local model returned an invalid answer."));
+        else reject(new Error("The assistant returned an invalid answer."));
       }
       function cleanup() { clearTimeout(timer); window.removeEventListener("message", receive); }
       const timer = setTimeout(() => {
         cleanup();
-        reject(new Error("The local model took too long. Check your connection and try again."));
-      }, 15 * 60 * 1000);
+        reject(new Error("The assistant took too long. Please try again."));
+      }, 2 * 60 * 1000);
       window.addEventListener("message", receive);
       window.parent.postMessage({ type: "browser-assistant-request", requestId, messages, context: studentContext() }, window.location.origin);
     });

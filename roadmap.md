@@ -1,6 +1,6 @@
 # Degree Completion Plan
 # Browser-only assistant
-- [ ] Replace hosted AI with a browser Qwen worker and verify popup behavior.
+- [x] Switch assistant back to hosted AI (user request).
 
 - [x] Research relevant Liberty catalogs and generate ten illustrative 120-credit plans from existing courses, including 9–20 related elective credits.
 - [x] Recreate the reference page elements and editable academic profile, progress, course statuses, filters, comparison, and print/export.

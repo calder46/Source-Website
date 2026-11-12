@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { BROWSER_MODEL, parseAssistantMessages } from '@/lib/browser-assistant';
-import { prebuiltAppConfig } from '@mlc-ai/web-llm';
+import { parseAssistantMessages } from '@/lib/browser-assistant';
 
-describe('Browser-only Qwen assistant', () => {
-  it('uses a Qwen model supported by the installed browser runtime', () => {
-    expect(BROWSER_MODEL).toBe('Qwen3-0.6B-q4f32_1-MLC');
-    expect(prebuiltAppConfig.model_list.some(model => model.model_id === BROWSER_MODEL)).toBe(true);
-  });
+describe('Assistant message validation', () => {
   it('accepts conversational messages', () => {
     expect(parseAssistantMessages([{role: 'user', content: 'Help me plan courses'}])).toEqual([{role: 'user', content: 'Help me plan courses'}]);
   });
