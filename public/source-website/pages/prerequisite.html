@@ -1,109 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Search Liberty courses, inspect prerequisite rules, and review transfer equivalencies from imported sources.">
-  <title>LU Prerequisite &amp; Transfer Finder | FastTrak</title>
-  <script>
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-  </script>
-  <link rel="stylesheet" href="../css/styles.css">
+    <meta charset="UTF-8" />
+    <title>FastTrak | Prerequisite Finder</title>
+
+    <script>
+        const currentTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", currentTheme);
+    </script>
+
+    <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body class="prerequisite-finder-page">
-<header class="plan-topbar">
-  <a class="plan-brand" href="../index.html">FastTrak <span class="visually-hidden">Course Registration</span></a>
-  <div class="account-actions">
-    <span id="account-state">Guest record</span>
-    <button class="btn btn-subtle" id="account-btn">Sign in</button>
-  </div>
-</header>
-
-<nav class="plan-nav" aria-label="Main navigation">
-  <a href="../index.html">⌂ Home</a>
-  <a href="search.html">⌕ Course Search</a>
-  <a href="prerequisite.html" class="active" aria-current="page">⇢ Prerequisite Finder</a>
-  <a href="calendar.html">▦ Course Calendar</a>
-  <a href="optimizer.html">☕︎ Course Optimizer</a>
-  <a href="dcp.html">▣ Degree Completion Plan</a>
-  <a href="hybrid.html">◫ Hybrid</a>
-  <div class="plan-nav-end">
-    <label class="theme-switch" for="checkbox">
-      <input type="checkbox" id="checkbox" aria-label="Dark theme">
-      <span class="slider"></span>
-    </label>
-    <select id="view-term" aria-label="Viewing term">
-      <option>Fall 2026</option>
-      <option>Spring 2027</option>
-      <option>Summer 2027</option>
-    </select>
-  </div>
-</nav>
-
-<div class="app-layout">
-  <aside class="sidebar" id="main-sidebar">
-    <div class="sidebar-content">
-      <h3>Enrolled Classes</h3>
-      <div id="enrolled-list"></div>
-      <button id="unenroll-all-btn" class="btn btn-danger" style="margin-top: auto; font-size: 0.8rem; align-self: stretch;">Unenroll All</button>
-    </div>
-  </aside>
-  <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
-
-  <main>
-    <h1>LU Prerequisite &amp; Transfer Finder</h1>
-    <p>Search imported Liberty catalog records, follow prerequisite requirements, and review documented transfer options.</p>
-
-    <section class="prerequisite-panel" aria-labelledby="course-search-heading">
-      <h2 id="course-search-heading">Find a Liberty course</h2>
-      <label for="course-search">Search by course code or title</label>
-      <input id="course-search" class="finder-search-input" type="search" autocomplete="off" placeholder="For example, CSIS 212 or programming" aria-controls="course-results">
-      <p id="course-search-status" role="status" aria-live="polite"></p>
-      <ul id="course-results" class="finder-results" aria-label="Matching courses"></ul>
-    </section>
-
-    <div id="finder-content" hidden>
-      <section id="selected-course" class="prerequisite-panel" aria-labelledby="selected-course-heading"></section>
-      <details class="prerequisite-panel finder-prerequisites" open>
-        <summary><h2 id="prerequisite-section-heading">Prerequisites</h2></summary>
-        <div id="prerequisite-details" aria-live="polite"></div>
-      </details>
-      <section class="prerequisite-panel" aria-labelledby="transfer-section-heading">
-        <h2 id="transfer-section-heading">Transfer equivalency results</h2>
-        <p>Verification dates are displayed when provided. Records are not automatically expired; confirm current applicability with Liberty using the linked official source.</p>
-        <div class="finder-filters">
-          <label>Institution
-            <select id="institution-filter"><option value="">All institutions</option></select>
-          </label>
-          <label>Verification status
-            <select id="status-filter">
-              <option value="">All statuses</option>
-              <option value="verified-liberty-guide">Verified in official Liberty guide</option>
-              <option value="official-needs-confirmation">Official source; confirm current status</option>
-              <option value="unverified-suggestion">Unverified suggestion</option>
-            </select>
-          </label>
+<body>
+    <header class="plan-topbar">
+        <a class="plan-brand" href="../index.html">FastTrak <span class="visually-hidden">Course Registration</span></a>
+        <div class="account-actions">
+            <span id="account-state">Guest record</span>
+            <button class="btn btn-subtle" id="account-btn">Sign in</button>
         </div>
-        <div id="transfer-results" aria-live="polite"></div>
-        <p><a href="https://www.liberty.edu/registrar/course-transfer-equivalency/" target="_blank" rel="noopener noreferrer">Search Liberty's official transfer equivalency resources ↗</a></p>
-      </section>
-    </div>
+    </header>
 
-    <details class="prerequisite-panel finder-import">
-      <summary>Import official course and transfer data (JSON)</summary>
-      <p>There is no connected official API or automatic import configured. Select a normalized JSON export to validate it and save it in this browser only. Validation checks structure and source URLs, not the truth of claims; verification labels come from the import and must be confirmed against their linked sources.</p>
-      <label for="data-import">Choose normalized JSON file</label>
-      <input id="data-import" type="file" accept=".json,application/json">
-      <div class="finder-import-actions">
-        <button id="import-data" class="btn btn-primary" type="button">Validate and import</button>
-        <button id="clear-data" class="btn btn-subtle" type="button">Clear imported data</button>
-      </div>
-      <p id="import-status" role="status" aria-live="polite"></p>
-      <details>
-        <summary>Required JSON format</summary>
-        <p>This schema illustration is not course data. Use four top-level arrays: <code>courses</code>, <code>prerequisiteRules</code>, <code>sendingInstitutions</code>, and <code>transferEquivalencies</code>. Each record needs a unique <code>id</code>, source institution, source URL, import date, and verification status. <a href="../data-import.md">Read the complete JSON import contract and update instructions</a>.</p>
-        <pre><code>{
+    <nav class="plan-nav" aria-label="Main navigation">
+        <a href="../index.html">⌂ Home</a>
+        <a href="search.html">⌕ Course Search</a>
+        <a href="prerequisite.html" class="active" aria-current="page">⇢ Prerequisite Finder</a>
+        <a href="calendar.html">▦ Course Calendar</a>
+        <a href="optimizer.html">☕︎ Course Optimizer</a>
+        <a href="dcp.html">▣ Degree Completion Plan</a>
+        <a href="hybrid.html">◫ Hybrid</a>
+        <div class="plan-nav-end">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" aria-label="Dark theme">
+                <span class="slider"></span>
+            </label>
+            <select id="view-term" aria-label="Viewing term">
+                <option>Fall 2026</option>
+                <option>Spring 2027</option>
+                <option>Summer 2027</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="main-sidebar">
+            <div class="sidebar-content">
+                <h3>Enrolled Classes</h3>
+                <div id="enrolled-list"></div>
+                <button id="unenroll-all-btn" class="btn btn-danger" style="margin-top: auto; font-size: 0.8rem; align-self: stretch;">Unenroll All</button>
+            </div>
+        </aside>
+        <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
+
+        <main>
+            <h1>LU Prerequisite &amp; Transfer Finder</h1>
+            <p>Search imported Liberty catalog records, follow prerequisite requirements, and review documented transfer options.</p>
+
+            <section class="prerequisite-panel" aria-labelledby="course-search-heading">
+                <h2 id="course-search-heading">Find a Liberty course</h2>
+                <label for="course-search">Search by course code or title</label>
+                <input id="course-search" class="finder-search-input" type="search" autocomplete="off" placeholder="For example, CSIS 212 or programming" aria-controls="course-results">
+                <p id="course-search-status" role="status" aria-live="polite"></p>
+                <ul id="course-results" class="finder-results" aria-label="Matching courses"></ul>
+            </section>
+
+            <div id="finder-content" hidden>
+                <section id="selected-course" class="prerequisite-panel" aria-labelledby="selected-course-heading"></section>
+                <details class="prerequisite-panel finder-prerequisites" open>
+                    <summary><h2 id="prerequisite-section-heading">Prerequisites</h2></summary>
+                    <div id="prerequisite-details" aria-live="polite"></div>
+                </details>
+                <section class="prerequisite-panel" aria-labelledby="transfer-section-heading">
+                    <h2 id="transfer-section-heading">Transfer equivalency results</h2>
+                    <p>Verification dates are displayed when provided. Records are not automatically expired; confirm current applicability with Liberty using the linked official source.</p>
+                    <div class="finder-filters">
+                        <label>
+                            Institution
+                            <select id="institution-filter"><option value="">All institutions</option></select>
+                        </label>
+                        <label>
+                            Verification status
+                            <select id="status-filter">
+                                <option value="">All statuses</option>
+                                <option value="verified-liberty-guide">Verified in official Liberty guide</option>
+                                <option value="official-needs-confirmation">Official source; confirm current status</option>
+                                <option value="unverified-suggestion">Unverified suggestion</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div id="transfer-results" aria-live="polite"></div>
+                    <p><a href="https://www.liberty.edu/registrar/course-transfer-equivalency/" target="_blank" rel="noopener noreferrer">Search Liberty's official transfer equivalency resources ↗</a></p>
+                </section>
+            </div>
+
+            <details class="prerequisite-panel finder-import">
+                <summary>Import official course and transfer data (JSON)</summary>
+                <p>There is no connected official API or automatic import configured. Select a normalized JSON export to validate it and save it in this browser only. Validation checks structure and source URLs, not the truth of claims; verification labels come from the import and must be confirmed against their linked sources.</p>
+                <label for="data-import">Choose normalized JSON file</label>
+                <input id="data-import" type="file" accept=".json,application/json">
+                <div class="finder-import-actions">
+                    <button id="import-data" class="btn btn-primary" type="button">Validate and import</button>
+                    <button id="clear-data" class="btn btn-subtle" type="button">Clear imported data</button>
+                </div>
+                <p id="import-status" role="status" aria-live="polite"></p>
+                <details>
+                    <summary>Required JSON format</summary>
+                    <p>This schema illustration is not course data. Use four top-level arrays: <code>courses</code>, <code>prerequisiteRules</code>, <code>sendingInstitutions</code>, and <code>transferEquivalencies</code>. Each record needs a unique <code>id</code>, source institution, source URL, import date, and verification status. <a href="../data-import.md">Read the complete JSON import contract and update instructions</a>.</p>
+                    <pre><code>{
   "courses": [{
     "id": "lib-course-unique-id",
     "courseCode": "CSIS 212",
@@ -135,13 +137,13 @@
   "sendingInstitutions": [],
   "transferEquivalencies": []
 }</code></pre>
-        <p>Use <code>AND</code> for required rules; rules sharing a group with <code>OR</code> represent permitted alternatives. Transfer rows reference course and institution IDs. Status values are <code>verified-liberty-guide</code>, <code>official-needs-confirmation</code>, and <code>unverified-suggestion</code>.</p>
-      </details>
-    </details>
-  </main>
-</div>
-<script src="../js/courses.js"></script>
-<script src="../js/app.js"></script>
-<script type="module" src="../js/prerequisite-finder.js"></script>
+                    <p>Use <code>AND</code> for required rules; rules sharing a group with <code>OR</code> represent permitted alternatives. Transfer rows reference course and institution IDs. Status values are <code>verified-liberty-guide</code>, <code>official-needs-confirmation</code>, and <code>unverified-suggestion</code>.</p>
+                </details>
+            </details>
+        </main>
+    </div>
+    <script src="../js/courses.js"></script>
+    <script src="../js/app.js"></script>
+    <script type="module" src="../js/prerequisite-finder.js"></script>
 </body>
 </html>

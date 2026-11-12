@@ -16,6 +16,7 @@
   color: var(--plan-text);
   font-size: 14px;
 }
+
 .degree-page[data-theme="dark"],
 [data-theme="dark"] .degree-page {
   --plan-bg: #111315;
@@ -30,35 +31,38 @@
   --plan-violet: #a86aec;
   --plan-red: #f27389;
 }
+
 .degree-page * {
   letter-spacing: 0;
 }
+
 .degree-page a {
   color: var(--plan-link);
   text-decoration: none;
 }
+
 .degree-page button,
 .degree-page select,
 .degree-page input {
   font: inherit;
 }
+
 .degree-page button {
   cursor: pointer;
 }
+
 .degree-page .btn {
   border-radius: 3px;
   padding: 10px 13px;
   font-size: 13px;
   white-space: normal;
 }
+
 .degree-page .btn-primary {
   background: var(--plan-blue);
   color: var(--plan-on-accent) !important;
 }
-.btn-subtle {
-  background: var(--plan-line);
-  color: var(--plan-text);
-}
+
 .degree-page input,
 .degree-page select {
   background: var(--plan-surface);
@@ -68,6 +72,7 @@
   border-radius: 3px;
   max-width: 100%;
 }
+
 .plan-topbar {
   display: flex;
   align-items: center;
@@ -77,24 +82,20 @@
   border-bottom: 1px solid var(--plan-line);
   gap: 15px;
 }
+
 .plan-brand {
   font-size: 22px;
   font-weight: 800;
   color: var(--plan-text) !important;
 }
+
 .plan-brand span {
   font-size: 13px;
   font-weight: 600;
   color: var(--plan-muted);
   margin-left: 20px;
 }
-.account-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--plan-muted);
-}
+
 .plan-nav {
   display: flex;
   gap: 28px;
@@ -104,15 +105,18 @@
   min-height: 58px;
   flex-wrap: wrap;
 }
+
 .plan-nav a {
   padding: 20px 0;
   color: var(--plan-muted);
   font-size: 12px;
 }
+
 .plan-nav a[aria-current] {
   color: var(--plan-link);
   border-bottom: 2px solid var(--plan-link);
 }
+
 .plan-nav-end {
   margin-left: auto;
   display: flex;
@@ -120,6 +124,7 @@
   align-items: center;
   padding: 8px 0;
 }
+
 .student-band {
   background: var(--plan-band);
   padding: 20px 24px;
@@ -128,12 +133,14 @@
   align-items: center;
   flex-wrap: wrap;
 }
+
 .student-summary {
   display: flex;
   gap: 28px;
   flex: 1;
   flex-wrap: wrap;
 }
+
 .student-summary span {
   display: block;
   font-size: 10px;
@@ -141,19 +148,24 @@
   margin-bottom: 6px;
   text-transform: uppercase;
 }
+
 .student-summary strong {
   font-size: 12px;
 }
+
 .student-summary .student-degree {
   max-width: 260px;
 }
+
 .plan-main {
   padding: 0;
 }
+
 .overview-band {
   background: var(--plan-surface);
   padding: 24px;
 }
+
 .heading-line {
   display: flex;
   align-items: center;
@@ -161,23 +173,28 @@
   gap: 20px;
   flex-wrap: wrap;
 }
+
 .degree-page h1 {
   font-size: 24px;
   margin: 4px 0 20px;
 }
+
 .degree-page h2 {
   font-size: 18px;
   margin: 0;
 }
+
 .eyebrow {
   font-size: 10px;
   color: var(--plan-muted);
   margin: 0 0 12px;
 }
+
 #save-state {
   font-size: 12px;
   color: var(--plan-muted);
 }
+
 .degree-tabs {
   display: flex;
   align-items: center;
@@ -185,63 +202,77 @@
   padding: 0 0 22px;
   flex-wrap: wrap;
 }
+
 .degree-choice {
   border-bottom: 3px solid var(--plan-link);
   padding-bottom: 8px;
 }
+
 .degree-choice select {
   font-weight: 700;
   color: var(--plan-link);
   border: 0;
   min-width: 300px;
 }
+
 #degree-school {
   font-size: 12px;
   color: var(--plan-muted);
 }
+
 .graduation-checks {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 22px;
 }
+
 .check {
   display: flex;
   gap: 9px;
   font-size: 11px;
   line-height: 1.6;
 }
+
 .check strong {
   display: block;
   font-size: 11px;
 }
+
 .check small {
   display: block;
   color: var(--plan-muted);
   font-size: 10px;
 }
+
 .status-icon {
   font-size: 19px;
   line-height: 1.2;
   flex-shrink: 0;
 }
+
 .is-complete {
   color: var(--plan-green);
 }
+
 .is-needed {
   color: var(--plan-red);
 }
+
 .is-progress {
   color: var(--plan-violet);
 }
+
 .requirements-section {
   padding: 24px;
 }
+
 .export-actions {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 5px;
 }
+
 .text-action {
   background: none;
   border: 0;
@@ -250,6 +281,7 @@
   font-size: 12px;
   font-weight: 600;
 }
+
 .plan-notice {
   font-size: 12px;
   line-height: 1.65;
@@ -257,27 +289,32 @@
   max-width: 660px;
   margin: 20px 0 24px;
 }
+
 .filters-progress {
   display: flex;
   gap: 16px;
   align-items: center;
   flex-wrap: wrap;
 }
+
 .filter-tabs {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
 }
+
 .credit-progress {
   flex: 1;
   min-width: 240px;
 }
+
 #credit-labels {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
   font-size: 12px;
 }
+
 .progress-track {
   height: 6px;
   background: var(--plan-line);
@@ -285,23 +322,28 @@
   display: flex;
   overflow: hidden;
 }
+
 #complete-bar {
   background: var(--plan-green);
 }
+
 #progress-bar {
   background: var(--plan-violet);
 }
+
 .course-tools {
   display: flex;
   justify-content: space-between;
   gap: 15px;
   margin: 18px 0;
 }
+
 .requirement-group {
   margin-bottom: 16px;
   background: var(--plan-surface);
   border-left: 2px solid var(--plan-link);
 }
+
 .requirement-group summary {
   padding: 16px;
   cursor: pointer;
@@ -312,18 +354,22 @@
   gap: 12px;
   font-weight: 700;
 }
+
 .requirement-group summary::after {
   content: "⌃";
 }
+
 .requirement-group:not([open]) summary::after {
   content: "⌄";
 }
+
 .group-credits {
   margin-left: auto;
   font-size: 11px;
   font-weight: 400;
   color: var(--plan-muted);
 }
+
 .section-caption {
   padding: 9px 16px;
   background: var(--plan-band);
@@ -331,56 +377,68 @@
   font-size: 11px;
   border-block: 1px solid var(--plan-line);
 }
+
 .table-scroll {
   overflow-x: auto;
   padding: 0 16px;
 }
+
 .course-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
 }
+
 .course-table td,
 .course-table th {
   padding: 11px 9px;
   text-align: left;
   border-bottom: 1px solid var(--plan-line);
 }
+
 .course-table th {
   font-size: 10px;
   color: var(--plan-muted);
   font-weight: 500;
 }
+
 .course-table td:first-child {
   width: 30px;
 }
+
 .course-table td:nth-child(2) {
   width: 120px;
   font-weight: 700;
   white-space: nowrap;
 }
+
 .course-table .record-input {
   width: 85px;
   font-size: 11px;
   padding: 5px;
 }
+
 .course-table .term-input {
   width: 115px;
 }
+
 .course-table .status-select {
   width: 118px;
   font-size: 11px;
   padding: 5px;
 }
+
 .plan-prereqs {
   display: block;
   font-size: 10px;
   color: var(--plan-muted);
   margin-top: 5px;
 }
+
 .hide-plan-prereqs .plan-prereqs {
   display: none;
 }
+
 .service-content {
   padding: 16px;
   font-size: 12px;
@@ -388,6 +446,7 @@
   gap: 12px;
   align-items: center;
 }
+
 .degree-page dialog {
   background: var(--plan-surface);
   color: var(--plan-text);
@@ -399,21 +458,25 @@
   max-height: 85vh;
   overflow: auto;
 }
+
 .degree-page dialog::backdrop {
   background: var(--plan-overlay);
 }
+
 .dialog-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
+
 .icon-btn {
   border: 0;
   background: none;
   color: var(--plan-text);
   font-size: 26px;
 }
+
 .degree-page dialog label {
   display: flex;
   flex-direction: column;
@@ -421,51 +484,63 @@
   font-size: 12px;
   margin-bottom: 16px;
 }
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 16px;
 }
+
 .dialog-footer {
   display: flex;
   gap: 8px;
   margin-top: 20px;
 }
+
 .google-button {
   width: 100%;
   margin-top: 16px;
 }
+
 #auth-feedback {
   font-size: 12px;
   color: var(--plan-link);
 }
+
 .comparison-stat {
   font-size: 30px;
   font-weight: 700;
   color: var(--plan-link);
   margin-bottom: 5px;
 }
+
 .sequence-term {
   margin: 20px 0;
 }
+
 .sequence-term h3 {
   font-size: 14px;
 }
+
 .sequence-term li {
   font-size: 12px;
   padding: 5px;
 }
+
 @media (max-width: 1100px) {
   .graduation-checks {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+
   .student-summary {
     gap: 20px;
   }
+
   .plan-nav {
     gap: 18px;
   }
 }
+
 @media (max-width: 600px) {
   .plan-topbar,
   .plan-nav,
@@ -475,65 +550,82 @@
     padding-left: 14px;
     padding-right: 14px;
   }
+
   .plan-brand span {
     display: none;
   }
+
   .plan-nav {
     gap: 15px;
   }
+
   .plan-nav a {
     padding: 12px 0;
     font-size: 11px;
   }
+
   .plan-nav-end {
     margin-left: 0;
   }
+
   .student-summary {
     flex-basis: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
+
   .student-degree {
     grid-column: 1 / -1;
   }
+
   .graduation-checks {
     grid-template-columns: 1fr 1fr;
     gap: 18px;
   }
+
   .degree-choice select {
     min-width: 0;
     width: 100%;
   }
+
   .degree-choice {
     width: 100%;
   }
+
   .degree-page h1 {
     font-size: 23px;
   }
+
   .export-actions {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     gap: 16px;
   }
+
   .course-tools {
     align-items: center;
   }
+
   .table-scroll {
     padding: 0 8px;
   }
+
   .course-table {
     min-width: 780px;
   }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .filter-tabs .btn {
     padding: 9px;
     font-size: 11px;
   }
 }
+
 @media print {
   .plan-topbar,
   .plan-nav,
@@ -545,6 +637,7 @@
   #save-state {
     display: none !important;
   }
+
   .degree-page {
     --plan-bg: #ffffff;
     --plan-surface: #ffffff;
@@ -553,174 +646,36 @@
     --plan-muted: #555555;
     --plan-line: #bbbbbb;
   }
+
   .overview-band,
   .requirements-section {
     padding: 12px;
   }
+
   .table-scroll {
     overflow: visible;
   }
+
   .course-table {
     min-width: 0;
   }
+
   .requirement-group {
     break-inside: avoid;
   }
+
   .course-table select,
   .course-table input {
     border: 0;
   }
+
   .plan-notice {
     margin: 10px 0;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .degree-page * {
     transition: none !important;
   }
-}
-/* Shared look for Course Search and Course Calendar */
-.degree-page .band-title {
-  margin: 0;
-  font-size: 24px;
-}
-.degree-page .app-layout {
-  background: var(--plan-bg);
-}
-.degree-page main {
-  padding: 24px;
-}
-.degree-page .sidebar {
-  background: var(--plan-surface);
-  border-right: 1px solid var(--plan-line);
-  color: var(--plan-text);
-}
-.degree-page .sidebar h3 {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--plan-muted);
-}
-.degree-page .enrolled-class-item {
-  background: var(--plan-band);
-  color: var(--plan-text);
-  border-left: 2px solid var(--plan-link);
-  border-radius: 0;
-  font-size: 12px;
-}
-.degree-page .search-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-}
-.degree-page #course-search {
-  width: 100%;
-  max-width: 640px;
-  padding: 12px;
-}
-.degree-page .course-card {
-  background: var(--plan-surface);
-  color: var(--plan-text);
-  border: 0;
-  border-left: 2px solid var(--plan-link);
-  border-radius: 0;
-  box-shadow: none;
-}
-.degree-page .course-card h3,
-.degree-page .course-card p {
-  color: var(--plan-text);
-}
-.degree-page .course-details,
-.degree-page .course-prereqs {
-  color: var(--plan-muted);
-  font-size: 12px;
-}
-.degree-page .btn-danger {
-  background: var(--plan-red);
-  color: var(--plan-on-accent);
-}
-.degree-page .calendar-panel {
-  padding: 16px;
-  overflow-x: auto;
-}
-.degree-page .schedule-grid th {
-  background: var(--plan-band);
-  color: var(--plan-muted);
-  font-size: 11px;
-  font-weight: 600;
-}
-.degree-page .schedule-grid th,
-.degree-page .schedule-grid td {
-  border-color: var(--plan-line);
-}
-.degree-page .time-col {
-  color: var(--plan-muted);
-  font-size: 11px;
-}
-.degree-page .course-block {
-  background: var(--plan-blue);
-  color: var(--plan-on-accent);
-  border-radius: 3px;
-}
-.degree-page .app-layout {
-  padding-top: 0;
-  min-height: calc(100vh - 220px);
-  position: relative;
-}
-.degree-page #sidebar-toggle-floating {
-  position: absolute;
-  top: 16px;
-  background: var(--plan-blue);
-  color: var(--plan-on-accent);
-  width: 32px;
-  height: 32px;
-  font-size: 1rem;
-}
-.degree-page .app-layout main {
-  padding-left: 40px;
-}
-.degree-page #course-search {
-  border: 1px solid var(--plan-line);
-}
-/* Home page */
-.degree-page .hero-band {
-  text-align: center;
-  padding: 56px 24px;
-}
-.degree-page .hero-tagline {
-  font-size: 16px;
-  color: var(--plan-muted);
-  margin: 0 0 24px;
-}
-.degree-page .hero-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.degree-page .feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
-.degree-page .feature-card {
-  background: var(--plan-surface);
-  border-left: 2px solid var(--plan-link);
-  padding: 20px;
-  color: var(--plan-text);
-  display: block;
-}
-.degree-page .feature-card h2 {
-  font-size: 15px;
-  margin: 0 0 10px;
-  color: var(--plan-text);
-}
-.degree-page .feature-card p {
-  font-size: 12px;
-  color: var(--plan-muted);
-  line-height: 1.6;
-  margin: 0;
-}
-.degree-page .feature-card:hover {
-  border-left-color: var(--plan-blue);
 }
