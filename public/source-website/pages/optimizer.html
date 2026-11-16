@@ -1,152 +1,141 @@
-﻿﻿<!doctype html>
+﻿<!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <title>FastTrak | Course Optimizer</title>
 
     <script>
-      const currentTheme = localStorage.getItem("theme") || "light";
-      document.documentElement.setAttribute("data-theme", currentTheme);
+        const currentTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", currentTheme);
     </script>
 
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/optimizer.css" />
-  </head>
-  <body class="optimizer-page">
+</head>
+<body class="optimizer-page">
     <header class="plan-topbar">
-      <a class="plan-brand" href="../index.html">FastTrak</a>
-      <div class="account-actions">
-        <span id="account-state">Guest record</span>
-        <button class="btn btn-subtle" id="account-btn">Sign in</button>
-      </div>
+        <a class="plan-brand" href="../index.html">FastTrak</a>
+        <div class="account-actions">
+            <span id="account-state">Guest record</span>
+            <button class="btn btn-subtle" id="account-btn">Sign in</button>
+        </div>
     </header>
 
     <nav class="plan-nav" aria-label="Main navigation">
-      <a href="../index.html">⌂ Home</a>
-      <a href="search.html">⌕ Course Search</a>
-      <a href="prerequisite.html">⇢ Prerequisite Finder</a>
-      <a href="calendar.html">▦ Course Calendar</a>
-      <a href="optimizer.html" class="active">☕︎ Course Optimizer</a>
-      <a href="dcp.html">▣ Degree Completion Plan</a>
-      <a href="hybrid.html">◫ Hybrid</a>
-      <div class="plan-nav-end">
-        <label class="theme-switch" for="checkbox">
-          <input type="checkbox" id="checkbox" aria-label="Dark theme" />
-          <span class="slider"></span>
-        </label>
-        <select id="view-term" aria-label="Viewing term">
-          <option>Fall 2026</option>
-          <option>Spring 2027</option>
-          <option>Summer 2027</option>
-        </select>
-      </div>
+        <a href="../index.html">⌂ Home</a>
+        <a href="search.html">⌕ Course Search</a>
+        <a href="prerequisite.html">⇢ Prerequisite Finder</a>
+        <a href="calendar.html">▦ Course Calendar</a>
+        <a href="optimizer.html" class="active">☕︎ Course Optimizer</a>
+        <a href="dcp.html">▣ Degree Completion Plan</a>
+        <a href="hybrid.html">◫ Hybrid</a>
+        <div class="plan-nav-end">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" aria-label="Dark theme" />
+                <span class="slider"></span>
+            </label>
+            <select id="view-term" aria-label="Viewing term">
+                <option>Fall 2026</option>
+                <option>Spring 2027</option>
+                <option>Summer 2027</option>
+            </select>
+        </div>
     </nav>
 
     <div class="app-layout">
-      <!-- Sidebar from search/calendar.html -->
-      <aside class="sidebar" id="main-sidebar">
-        <div class="sidebar-content">
-          <h3>Enrolled Classes</h3>
-          <div id="enrolled-list"></div>
-          <button
-            id="unenroll-all-btn"
-            class="btn btn-danger"
-            style="margin-top: auto; font-size: 0.8rem; align-self: stretch"
-          >
-            Unenroll All
-          </button>
-        </div>
-      </aside>
-
-      <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
-
-      <main>
-        <h1>Course Optimizer</h1>
-        <p>Generate an optimized academic roadmap based on your graduation goals.</p>
-
-        <div class="optimizer-controls">
-          <div class="control-card">
-            <div class="control-group" style="margin-bottom: 15px">
-              <label for="opt-degree">Target Degree</label>
-              <select
-                id="opt-degree"
-                class="select-input"
-                style="width: 100%; padding: 8px; border-radius: 4px"
-              >
-                <option value="">-- Select a degree --</option>
-              </select>
+        <!-- Sidebar from search/calendar.html -->
+        <aside class="sidebar" id="main-sidebar">
+            <div class="sidebar-content">
+                <h3>Enrolled Classes</h3>
+                <div id="enrolled-list"></div>
+                <button id="unenroll-all-btn"
+                        class="btn btn-danger"
+                        style="margin-top: auto; font-size: 0.8rem; align-self: stretch">
+                    Unenroll All
+                </button>
             </div>
+        </aside>
 
-            <div class="control-group" style="margin-bottom: 15px">
-              <label for="opt-grad-semester">Target Graduation Semester</label>
-              <select
-                id="opt-grad-semester"
-                class="select-input"
-                style="width: 100%; padding: 8px; border-radius: 4px"
-              >
-                <!-- Populated by JS -->
-              </select>
-            </div>
+        <button id="sidebar-toggle-floating" title="Toggle Sidebar"></button>
 
-            <div class="control-group" style="margin-bottom: 15px">
-              <label for="opt-max-credits">Max Credits per Semester</label>
-              <input
-                type="number"
-                id="opt-max-credits"
-                class="select-input"
-                value="18"
-                min="3"
-                max="24"
-                style="width: 100%; padding: 8px; border-radius: 4px"
-              />
-            </div>
+        <main>
+            <h1>Course Optimizer</h1>
+            <p>Generate an optimized academic roadmap based on your graduation goals.</p>
 
-            <div class="control-group">
-              <label>Optimization Priority</label>
-              <label for="opt-priority"></label
-              ><select
-                id="opt-priority"
-                class="select-input"
-                style="width: 100%; padding: 8px; border-radius: 4px"
-              >
-                <option value="speed">🚀 Quickest Graduation</option>
-                <option value="balance">⚖️ Balanced Workload</option>
-              </select>
-            </div>
+            <div class="optimizer-controls">
+                <div class="control-card">
+                    <div class="control-group" style="margin-bottom: 15px">
+                        <label for="opt-degree">Target Degree</label>
+                        <select id="opt-degree"
+                                class="select-input"
+                                style="width: 100%; padding: 8px; border-radius: 4px">
+                            <option value="">-- Select a degree --</option>
+                        </select>
+                    </div>
 
-            <div class="control-group" style="margin-bottom: 15px">
-              <label>Included Semesters</label>
-              <div class="semester-selection">
-                <div class="semester-labels">
-                  <span>Fall</span>
-                  <span>Spring</span>
-                  <span>Summer</span>
+                    <div class="control-group" style="margin-bottom: 15px">
+                        <label for="opt-grad-semester">Target Graduation Semester</label>
+                        <select id="opt-grad-semester"
+                                class="select-input"
+                                style="width: 100%; padding: 8px; border-radius: 4px">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom: 15px">
+                        <label for="opt-max-credits">Max Credits per Semester</label>
+                        <input type="number"
+                               id="opt-max-credits"
+                               class="select-input"
+                               value="18"
+                               min="3"
+                               max="24"
+                               style="width: 100%; padding: 8px; border-radius: 4px" />
+                    </div>
+
+                    <div class="control-group">
+                        <label>Optimization Priority</label>
+                        <label for="opt-priority"></label><select id="opt-priority"
+                                                                  class="select-input"
+                                                                  style="width: 100%; padding: 8px; border-radius: 4px">
+                            <option value="speed">🚀 Quickest Graduation</option>
+                            <option value="balance">⚖️ Balanced Workload</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom: 15px">
+                        <label>Included Semesters</label>
+                        <div class="semester-selection">
+                            <div class="semester-labels">
+                                <span>Fall</span>
+                                <span>Spring</span>
+                                <span>Summer</span>
+                            </div>
+                            <div class="semester-checkboxes">
+                                <label><input type="checkbox" class="opt-semester" value="Fall" checked /></label>
+                                <label>
+                                    <input type="checkbox" class="opt-semester" value="Spring" checked />
+                                </label>
+                                <label><input type="checkbox" class="opt-semester" value="Summer" /></label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="semester-checkboxes">
-                  <label><input type="checkbox" class="opt-semester" value="Fall" checked /></label>
-                  <label
-                    ><input type="checkbox" class="opt-semester" value="Spring" checked
-                  /></label>
-                  <label><input type="checkbox" class="opt-semester" value="Summer" /></label>
-                </div>
-              </div>
+
+                <button id="btn-generate" class="btn btn-primary" style="width: 100%">
+                    Generate Roadmap
+                </button>
             </div>
-          </div>
 
-          <button id="btn-generate" class="btn btn-primary" style="width: 100%">
-            Generate Roadmap
-          </button>
-        </div>
-
-        <div id="optimizer-results" class="optimizer-results">
-          <!-- Results will be injected here -->
-        </div>
-      </main>
+            <div id="optimizer-results" class="optimizer-results">
+                <!-- Results will be injected here -->
+            </div>
+        </main>
     </div>
 
     <script src="../js/courses.js"></script>
     <script src="../js/degrees.js"></script>
     <script src="../js/app.js"></script>
     <script src="../js/optimizer.js"></script>
-  </body>
+</body>
 </html>
