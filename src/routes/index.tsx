@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
 import { AcademicStorageBridge } from "@/components/academic-storage-bridge";
+import { AssistantBridge } from "@/components/assistant-bridge";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +22,7 @@ function Index() {
   return (
     <>
     <AcademicStorageBridge frame={frame} />
+    <AssistantBridge frame={frame} />
     <iframe
       ref={frame}
       className="source-website-frame"

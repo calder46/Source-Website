@@ -86,8 +86,9 @@
     </div>
 
     <script src="../js/courses.js"></script>
+    <script src="../js/userdata.js"></script>
     <script src="../js/app.js"></script>
-    <script src="js/assistant.js"></script>
+    <script src="../js/assistant.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const tbody = document.getElementById("calendar-body");
@@ -130,7 +131,12 @@
                 const block = document.createElement("div");
                 block.className = "course-block";
                 // Show the formatted time on the block
-                block.innerHTML = `<strong title="${course.name}">${course.id}</strong><br>${formatTime(course.startTime) + " - " + formatTime(course.endTime)}`;
+                const courseLabel = document.createElement("strong");
+                courseLabel.title = course.name;
+                courseLabel.textContent = course.id;
+                block.appendChild(courseLabel);
+                block.appendChild(document.createElement("br"));
+                block.appendChild(document.createTextNode(`${formatTime(course.startTime)} - ${formatTime(course.endTime)}`));
                 cell.appendChild(block);
               }
             }

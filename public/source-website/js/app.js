@@ -62,7 +62,7 @@ const renderSidebar = () => {
     }
 
     sidebarList.innerHTML = enrolled.map(course => `
-        <div class="enrolled-class-item">${course.id} - ${course.name}</div>
+        <div class="enrolled-class-item">${escapeCourseMarkup(course.id)} - ${escapeCourseMarkup(course.name)}</div>
     `).join('');
 };
 
@@ -128,15 +128,19 @@ const escapeCourseMarkup = (value) => String(value ?? '').replace(/[&<>"']/g, ch
 }[character]));
 
 const coursesByPrerequisite = new Map();
-courseDatabase.forEach(course => {
-    if (!Array.isArray(course.prerequisites)) return;
+const rebuildCoursePrerequisites = () => {
+    coursesByPrerequisite.clear();
+    courseDatabase.forEach(course => {
+        if (!Array.isArray(course.prerequisites)) return;
 
-    course.prerequisites.forEach(prerequisite => {
-        const requiredBy = coursesByPrerequisite.get(prerequisite) || [];
-        requiredBy.push(course);
-        coursesByPrerequisite.set(prerequisite, requiredBy);
+        course.prerequisites.forEach(prerequisite => {
+            const requiredBy = coursesByPrerequisite.get(prerequisite) || [];
+            requiredBy.push(course);
+            coursesByPrerequisite.set(prerequisite, requiredBy);
+        });
     });
-});
+};
+rebuildCoursePrerequisites();
 
 const transferStatusLabels = {
     'verified-liberty-guide': 'Listed in a Liberty transfer guide',
@@ -417,9 +421,9 @@ const renderSearchResults = (filterText = "") => {
 
         return `
                 <div class="course-card" data-course-id="${escapeCourseMarkup(course.id)}" tabindex="-1">
-                    <h3>${course.id}: ${course.name}</h3>
-                    <p><em>${course.univ} | Professor: ${course.prof}</em></p>
-                    ${course.desc}
+                    <h3>${escapeCourseMarkup(course.id)}: ${escapeCourseMarkup(course.name)}</h3>
+                    <p><em>${escapeCourseMarkup(course.univ)} | Professor: ${escapeCourseMarkup(course.prof)}</em></p>
+                    ${course.custom ? `<p>${escapeCourseMarkup(course.desc)}</p><p><strong>Custom course proposal — not registrar approved.</strong></p>` : course.desc}
                     <div class="course-footer">
                         ${formatTime(course.startTime)} - ${formatTime(course.endTime)} - ${course.day}
                         <hr style="margin: 10px 0; opacity: 0.2;">
@@ -446,7 +450,7 @@ const renderSearchResults = (filterText = "") => {
                                             </div>
                         </div>
                         <button class="enroll-btn btn ${isEnrolled ? 'btn-danger' : 'btn-primary'}" 
-                                data-id="${course.id}" 
+                                data-id="${escapeCourseMarkup(course.id)}" 
                                 data-action="${isEnrolled ? 'unenroll' : 'enroll'}">
                             ${isEnrolled ? 'Drop' : 'Enroll'}
                         </button>
@@ -466,6 +470,14 @@ const formatTime = (timeStr) => {
     hours = hours ? hours : 12; // the hour '0' should be '12'
     return `${hours}:${minutes} ${ampm}`;
 };
+
+window.addEventListener('fasttrak:userdata', () => {
+    rebuildCoursePrerequisites();
+    renderSidebar();
+    const searchInput = document.getElementById('course-search');
+    if (document.getElementById('course-results')) renderSearchResults(searchInput?.value || '');
+    refreshEnrollmentButtons();
+});
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {

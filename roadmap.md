@@ -1,5 +1,14 @@
+# Custom curriculum assistant
+- [ ] Add a Build custom course popup with sourced university-course research.
+- [ ] Rework curriculum planning into a four-page slider with clear step navigation.
+- [ ] Require and validate mailing address fields in registrar submissions.
+- [ ] Guide users from career goals and skills through catalog or custom courses to a saved curriculum.
+- [ ] Load and save a local `userdata` file, with browser backup and download/import support.
+- [ ] Add readiness-gated registrar form and store submissions in `userdata`.
+- [ ] Connect registrar email to example@liberty.edu after a verified sender domain is configured (blocked: no email domain).
+- [ ] Reconnect the hosted assistant parent-frame bridge and verify the complete browser flow.
+
 # Degree Completion Plan
-# Browser-only assistant
 - [x] Switch assistant back to hosted AI (user request).
 
 - [x] Research relevant Liberty catalogs and generate ten illustrative 120-credit plans from existing courses, including 9–20 related elective credits.
