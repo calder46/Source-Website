@@ -32,7 +32,6 @@
   --bg-sidebar: #1a1d24;
   --bg-card: #1a1d24;
   --text-main: #f2f3f5;
-  --text-nav: #ffffff;
   --border-color: #454953;
   --plan-bg: #111315;
   --plan-surface: #1a1d24;
@@ -181,7 +180,6 @@ body {
   height: 18px;
   width: 18px;
   left: 3px;
-  position: absolute;
   top: 3px;
   border-radius: 50%;
 }
@@ -237,7 +235,7 @@ input:checked + .slider:before {
   font-size: 1.2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   left: var(--sidebar-width);
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* Centers the circle on the sidebar edge */
 }
 
 body.sidebar-collapsed .sidebar {
@@ -246,7 +244,7 @@ body.sidebar-collapsed .sidebar {
 
 body.sidebar-collapsed #sidebar-toggle-floating {
   left: 15px;
-  transform: translateX(0);
+  transform: translateX(0); /* Resets center so it sits at the edge */
 }
 
 .sidebar-content {
@@ -275,25 +273,6 @@ body.sidebar-collapsed #sidebar-toggle-floating {
 
 .app-container {
   position: relative; /* Required for absolute positioning of the button */
-}
-
-#sidebar-toggle-floating {
-  left: var(--sidebar-width);
-  transform: translateX(-50%);
-}
-
-body:not(.sidebar-collapsed) #sidebar-toggle-floating {
-  left: var(--sidebar-width);
-  transform: translateX(-50%); /* Centers the circle on the line */
-}
-
-body.sidebar-collapsed #sidebar-toggle-floating {
-  left: 15px;
-  transform: translateX(0); /* Resets center so it sits at the edge */
-}
-
-body.sidebar-collapsed .sidebar {
-  transform: translateX(-100%);
 }
 
 main {
@@ -498,7 +477,8 @@ main {
 }
 
 /* --- Components --- */
-.widget {
+.widget,
+.course-card {
   display: flex;
   flex-direction: column;
   background: var(--bg-card);
@@ -509,13 +489,6 @@ main {
 }
 
 .course-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-card);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
   height: 100%; /* Ensure cards in a row have equal height */
 }
 
@@ -524,21 +497,21 @@ main {
   padding-top: 10px;
 }
 
-input[type="text"] {
+input[type="text"],
+.finder-search-input {
+  width: 100%;
   background-color: var(--bg-sidebar);
   color: var(--text-main);
   border: 1px solid var(--border-color);
+}
+
+input[type="text"] {
   padding: 10px;
-  width: 100%;
 }
 
 .finder-search-input {
-  width: 100%;
   padding: 14px;
   font-size: 1.05rem;
-  background-color: var(--bg-sidebar);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
 }
 
 #calendar-view {
@@ -744,7 +717,6 @@ input[type="text"] {
   min-height: 58px;
   margin-top: 8px;
   padding: 15px 18px;
-  border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(27, 45, 70, 0.06);
   font: inherit;
@@ -853,6 +825,7 @@ body.hide-prereqs .course-prereqs {
   display: none;
 }
 
+/* --- Optimizer --- */
 .optimizer-controls {
   display: flex;
   flex-direction: column;
@@ -905,6 +878,7 @@ body.hide-prereqs .course-prereqs {
   margin: 0;
   font-size: 1rem;
 }
+
 .course-info p {
   margin: 2px 0 0 0;
   font-size: 0.85rem;
@@ -958,38 +932,12 @@ body.hide-prereqs .course-prereqs {
   margin-bottom: 4px;
 }
 
+/* --- Degree Plan Page --- */
+/* Theme variables (--plan-*) are inherited from :root and [data-theme="dark"] */
 .degree-page {
-  --plan-bg: #f3f5f8;
-  --plan-surface: #ffffff;
-  --plan-band: #e9edf3;
-  --plan-line: #c6cbd4;
-  --plan-text: #23262d;
-  --plan-muted: #667081;
-  --plan-blue: #096bdc;
-  --plan-link: #1672cd;
-  --plan-green: #138c49;
-  --plan-violet: #8545d5;
-  --plan-red: #cb3555;
-  --plan-on-accent: #ffffff;
-  --plan-overlay: #00000099;
   background: var(--plan-bg);
   color: var(--plan-text);
   font-size: 14px;
-}
-
-.degree-page[data-theme="dark"],
-[data-theme="dark"] .degree-page {
-  --plan-bg: #111315;
-  --plan-surface: #1a1d24;
-  --plan-band: #252830;
-  --plan-line: #454953;
-  --plan-text: #f2f3f5;
-  --plan-muted: #a3a9b5;
-  --plan-blue: #086bd9;
-  --plan-link: #6fb3ff;
-  --plan-green: #7bda9e;
-  --plan-violet: #a86aec;
-  --plan-red: #f27389;
 }
 
 .degree-page * {
